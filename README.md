@@ -1,8 +1,19 @@
 # Agnostic Backend
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/agnostic_backend`. To experiment with that code, run `bin/console` for an interactive prompt.
+`agnostic_backend` is a gem that provides indexing and searching
+capabililities to Ruby objects by supplying two modules: `Indexable`
+and `Queryable`. `Indexable` provides indexing functionality by
+specifying a way to define which attributes of an object should be
+included in the document to be indexed to a remote backend
+store. `Queryable` provides search and retrieval functionality by
+specifying a generic query language that seamlessly maps to specific
+backend languages.
 
-TODO: Delete this and the text above, and describe your gem
+Although the motivation and use case for the gem relates to
+`ActiveRecord` models, no assumption is made as to the classes to
+which `Indexable` and `Queryable` are included in order to maximize
+the flexibility of clients with respect to the use cases they need to
+address.
 
 ## Installation
 
@@ -20,9 +31,24 @@ Or install it yourself as:
 
     $ gem install agnostic_backend
 
+## Requirements
+
+`agnostic_backend` requires a ruby version `>=2.1.0` due to the use of
+mandatory keyword arguments in method definitions.
+
 ## Usage
 
-TODO: Write usage instructions here
+### Indexable
+
+### Queryable
+
+## Tests
+
+The gem's test suite runs by executing:
+
+    $ bundle exec rspec spec
+
+This will also generate a test coverage report in `coverage/index.html` for inspection.
 
 ## Development
 
@@ -38,21 +64,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-
-## OVERVIEW
-
-## INSTALLATION
-
-## USAGE
-
-### Indexable
-
-### Queryable
-
-## TESTS
-
-## CONTRIBUTING
-
-## LICENSE
-
