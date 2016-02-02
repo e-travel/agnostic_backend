@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::Validator do
+describe AgnosticBackend::Queryable::Validator do
 
   let(:index) { double('Index', schema: {'attribute' => double('FieldType', type: :integer)}) }
   let(:query) { double('Query', errors: Hash.new{|hash, key| hash[key] = Array.new })}
@@ -12,7 +12,7 @@ describe AgnosticStore::Queryable::Validator do
       DummyClass.new
     end
     let(:attribute_name) { 'nested_model.attribute' }
-    let(:visitor_subject) { AgnosticStore::Queryable::Attribute.new(attribute_name, parent: parent, context: context) }
+    let(:visitor_subject) { AgnosticBackend::Queryable::Attribute.new(attribute_name, parent: parent, context: context) }
 
     context 'when schema does not have attribute name as key' do
       before do
@@ -22,7 +22,7 @@ describe AgnosticStore::Queryable::Validator do
       it 'should append error to query errors' do
         expect(subject).to receive(:visit_attribute).and_call_original
         subject.visit(visitor_subject)
-        expect(query.errors).to eq({'AgnosticStore::Queryable::Attribute'=>['Attribute \'nested_model.attribute\' in DummyClass missing from schema']})
+        expect(query.errors).to eq({'AgnosticBackend::Queryable::Attribute'=>['Attribute \'nested_model.attribute\' in DummyClass missing from schema']})
       end
 
       it 'should change validator state to invalid' do

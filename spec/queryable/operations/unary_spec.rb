@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::Operations::Unary do
+describe AgnosticBackend::Queryable::Operations::Unary do
 
   let(:operands) { [:foo] }
   let(:context) { :context }
-  let(:operation) { AgnosticStore::Queryable::Operations::Unary.new(operands, context) }
+  let(:operation) { AgnosticBackend::Queryable::Operations::Unary.new(operands, context) }
 
   context 'inheritance' do
     it 'should inherit from operation' do
-      expect(operation).to be_a_kind_of(AgnosticStore::Queryable::Operations::Operation)
+      expect(operation).to be_a_kind_of(AgnosticBackend::Queryable::Operations::Operation)
     end
   end
 
@@ -19,16 +19,16 @@ describe AgnosticStore::Queryable::Operations::Unary do
   end
 
   context 'Not operation' do
-    let(:not_operation) { AgnosticStore::Queryable::Operations::Not.new(operands, context) }
+    let(:not_operation) { AgnosticBackend::Queryable::Operations::Not.new(operands, context) }
     it 'should inherit from Unary operation' do
-      expect(not_operation).to be_a_kind_of AgnosticStore::Queryable::Operations::Unary
+      expect(not_operation).to be_a_kind_of AgnosticBackend::Queryable::Operations::Unary
     end
   end
 
   context 'Ascending operation' do
-    let(:asc_operation) { AgnosticStore::Queryable::Operations::Ascending.new(operands, context) }
+    let(:asc_operation) { AgnosticBackend::Queryable::Operations::Ascending.new(operands, context) }
     it 'should inherit from Unary operation' do
-      expect(asc_operation).to be_a_kind_of AgnosticStore::Queryable::Operations::Unary
+      expect(asc_operation).to be_a_kind_of AgnosticBackend::Queryable::Operations::Unary
     end
 
     context 'aliases' do
@@ -40,14 +40,14 @@ describe AgnosticStore::Queryable::Operations::Unary do
     end
 
     it 'should map operand to value' do
-      expect(asc_operation.operand).to be_a_kind_of AgnosticStore::Queryable::Attribute
+      expect(asc_operation.operand).to be_a_kind_of AgnosticBackend::Queryable::Attribute
     end
   end
 
   context 'Descending operation' do
-    let(:desc_operation) { AgnosticStore::Queryable::Operations::Descending.new(operands, context) }
+    let(:desc_operation) { AgnosticBackend::Queryable::Operations::Descending.new(operands, context) }
     it 'should inherit from Unary operation' do
-      expect(desc_operation).to be_a_kind_of(AgnosticStore::Queryable::Operations::Unary)
+      expect(desc_operation).to be_a_kind_of(AgnosticBackend::Queryable::Operations::Unary)
     end
 
     context 'aliases' do
@@ -59,7 +59,7 @@ describe AgnosticStore::Queryable::Operations::Unary do
     end
 
     it 'should map operator to value' do
-      expect(desc_operation.operand).to be_a_kind_of AgnosticStore::Queryable::Attribute
+      expect(desc_operation.operand).to be_a_kind_of AgnosticBackend::Queryable::Attribute
     end
   end
 end

@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
     class Query < TreeNode
       attr_accessor :errors
@@ -15,7 +15,7 @@ module AgnosticStore
       end
 
       def valid?
-        self.accept(AgnosticStore::Queryable::Validator.new)
+        self.accept(AgnosticBackend::Queryable::Validator.new)
       end
     end
   end

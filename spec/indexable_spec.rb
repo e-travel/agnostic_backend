@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe AgnosticStore::Indexable do
-  describe AgnosticStore::Indexable::Config do
-    subject { AgnosticStore::Indexable::Config }
+describe AgnosticBackend::Indexable do
+  describe AgnosticBackend::Indexable::Config do
+    subject { AgnosticBackend::Indexable::Config }
 
     let(:index_class) { double('IndexClass') }
     let(:indexable_class) { double('IndexableClass', name:'IndexableClass') }
@@ -26,8 +26,8 @@ describe AgnosticStore::Indexable do
     end
   end
 
-  describe AgnosticStore::Indexable::FieldType do
-    subject { AgnosticStore::Indexable::FieldType }
+  describe AgnosticBackend::Indexable::FieldType do
+    subject { AgnosticBackend::Indexable::FieldType }
 
     describe '.all' do
       it { expect(subject.all).to include :integer }
@@ -83,8 +83,8 @@ describe AgnosticStore::Indexable do
     end
   end
 
-  describe AgnosticStore::Indexable::Field do
-    subject { AgnosticStore::Indexable::Field }
+  describe AgnosticBackend::Indexable::Field do
+    subject { AgnosticBackend::Indexable::Field }
 
     describe '#initialize' do
       context 'when type is not supported ' do
@@ -95,8 +95,8 @@ describe AgnosticStore::Indexable do
 
       context 'when type is supported' do
         it 'should create and store a FieldType' do
-          field = subject.new 'hello', AgnosticStore::Indexable::FieldType::INTEGER
-          expect(field.type).to be_a AgnosticStore::Indexable::FieldType
+          field = subject.new 'hello', AgnosticBackend::Indexable::FieldType::INTEGER
+          expect(field.type).to be_a AgnosticBackend::Indexable::FieldType
         end
       end
 
@@ -153,8 +153,8 @@ describe AgnosticStore::Indexable do
     end
   end
 
-  describe AgnosticStore::Indexable::ContentManager do
-    subject { AgnosticStore::Indexable::ContentManager.new }
+  describe AgnosticBackend::Indexable::ContentManager do
+    subject { AgnosticBackend::Indexable::ContentManager.new }
 
     describe '#add_definitions' do
       let(:field_block) { Proc.new { field :a } }
@@ -166,7 +166,7 @@ describe AgnosticStore::Indexable do
 
     describe '#method_missing' do
       context 'when the method name is a field type' do
-        before { allow(AgnosticStore::Indexable::FieldType).to receive(:exists?).and_return true }
+        before { allow(AgnosticBackend::Indexable::FieldType).to receive(:exists?).and_return true }
         it 'should add the field to the contents' do
           expect(subject).to receive(:field).with(:field_name, {value: nil, type: :foo}).
                                  and_call_original
@@ -175,7 +175,7 @@ describe AgnosticStore::Indexable do
       end
 
       context 'when the method name is not a field type' do
-        before { allow(AgnosticStore::Indexable::FieldType).to receive(:exists?).and_return false }
+        before { allow(AgnosticBackend::Indexable::FieldType).to receive(:exists?).and_return false }
         it 'should forward the message to its superclass' do
           expect { subject.send(:foo, :arg1, kwarg1: :hello) }.to raise_error NoMethodError
         end
@@ -184,7 +184,7 @@ describe AgnosticStore::Indexable do
 
     describe '#respond_to?' do
       context 'when sym is a Field type' do
-        it { expect(AgnosticStore::Indexable::FieldType.all.all?{|type| subject.respond_to? type })
+        it { expect(AgnosticBackend::Indexable::FieldType.all.all?{|type| subject.respond_to? type })
                  .to be_true }
       end
 
@@ -201,21 +201,21 @@ describe AgnosticStore::Indexable do
     describe '#field' do
       context 'when value: is nil' do
         it 'should add a Field with field_name into the hash' do
-          expect(AgnosticStore::Indexable::Field).
+          expect(AgnosticBackend::Indexable::Field).
               to receive(:new).with(:a, :integer, {:from=>nil}).
                      and_call_original
           subject.field(:a, type: :integer)
-          expect(subject.contents['a']).to be_a AgnosticStore::Indexable::Field
+          expect(subject.contents['a']).to be_a AgnosticBackend::Indexable::Field
         end
       end
 
       context 'when value: is present' do
         it 'should add a Field with the value into the hash' do
-          expect(AgnosticStore::Indexable::Field).
+          expect(AgnosticBackend::Indexable::Field).
               to receive(:new).with(:b, :text, {:from=>nil}).
                      and_call_original
           subject.field(:a, value: :b, type: :text)
-          expect(subject.contents['a']).to be_a AgnosticStore::Indexable::Field
+          expect(subject.contents['a']).to be_a AgnosticBackend::Indexable::Field
         end
       end
     end
@@ -276,18 +276,18 @@ describe AgnosticStore::Indexable do
       Object.send(:remove_const, :IndexableObject) if Object.constants.include? :IndexableObject
       class IndexableObject; end
       allow(IndexableObject).to receive(:<).with(ActiveRecord::Base).and_return true
-      IndexableObject.send(:include, AgnosticStore::Indexable)
+      IndexableObject.send(:include, AgnosticBackend::Indexable)
     end
 
     subject { IndexableObject.new }
 
     describe '.includers' do
-      it { expect(AgnosticStore::Indexable.includers).to include IndexableObject }
+      it { expect(AgnosticBackend::Indexable.includers).to include IndexableObject }
 
       context 'when the same class includes Indexable twice' do
-        before { IndexableObject.send(:include, AgnosticStore::Indexable) }
+        before { IndexableObject.send(:include, AgnosticBackend::Indexable) }
         it 'should appear once in the includers array' do
-          expect(AgnosticStore::Indexable.includers.count{|klass| klass == IndexableObject}).to eq 1
+          expect(AgnosticBackend::Indexable.includers.count{|klass| klass == IndexableObject}).to eq 1
         end
       end
     end
@@ -296,13 +296,13 @@ describe AgnosticStore::Indexable do
       context 'when an indexable class that corresponds to the index_name exists' do
         let(:index_name) { IndexableObject.index_name }
         it 'should return the indexable_class ' do
-          expect(AgnosticStore::Indexable.indexable_class(index_name).name).to eq IndexableObject.name
+          expect(AgnosticBackend::Indexable.indexable_class(index_name).name).to eq IndexableObject.name
         end
       end
 
       context 'when an indexable class that corresponds to the index_name does not exist' do
         let(:index_name) { 'no_such_index_exists' }
-        it { expect(AgnosticStore::Indexable.indexable_class(index_name)).to be_nil }
+        it { expect(AgnosticBackend::Indexable.indexable_class(index_name)).to be_nil }
       end
     end
 
@@ -319,7 +319,7 @@ describe AgnosticStore::Indexable do
       describe '.create_index' do
         let(:index) { double('Index') }
         it 'should use the Config object to create an index' do
-          expect(AgnosticStore::Indexable::Config).
+          expect(AgnosticBackend::Indexable::Config).
               to receive(:create_index_for).
                      with(IndexableObject).
                      and_return index
@@ -455,7 +455,7 @@ describe AgnosticStore::Indexable do
               managers = subject.send(:_index_content_managers)
               expect(managers).to eq subject.class._index_content_managers
               expect(managers.keys).to eq ['indexable_objects']
-              expect(managers.values.first).to be_a AgnosticStore::Indexable::ContentManager
+              expect(managers.values.first).to be_a AgnosticBackend::Indexable::ContentManager
             end
             it 'should setup the correct context for assembling the values' do
               managers = subject.send(:_index_content_managers)
@@ -469,7 +469,7 @@ describe AgnosticStore::Indexable do
               IndexableObject.define_index_fields(owner: 'test', &field_block)
               managers = subject.send(:_index_content_managers)
               expect(managers.keys).to eq ['indexable_objects', 'tests']
-              expect(managers.values.all?{|v| v.is_a? AgnosticStore::Indexable::ContentManager}).
+              expect(managers.values.all?{|v| v.is_a? AgnosticBackend::Indexable::ContentManager}).
                   to be_true
             end
           end
@@ -563,8 +563,8 @@ describe AgnosticStore::Indexable do
       end
 
       describe '#put_in_index' do
-        let(:index) { AgnosticStore::Index.new(subject) }
-        let(:indexer) { AgnosticStore::Indexer.new(index) }
+        let(:index) { AgnosticBackend::Index.new(subject) }
+        let(:indexer) { AgnosticBackend::Indexer.new(index) }
         before { allow(IndexableObject).to receive(:create_index).and_return(index) }
         it 'should index itself' do
           expect(index).to receive(:indexer).and_return(indexer)
@@ -606,7 +606,7 @@ describe AgnosticStore::Indexable do
         context 'when index_name has not been defined' do
           before { allow(subject).to receive(:_index_content_managers).and_return({}) }
           it 'should do nothing' do
-            expect(AgnosticStore::DocumentBufferItem).not_to receive(:create)
+            expect(AgnosticBackend::DocumentBufferItem).not_to receive(:create)
             subject.enqueue_for_indexing :not_there
           end
         end
@@ -618,12 +618,12 @@ describe AgnosticStore::Indexable do
             allow(subject).to receive(:id).and_return 111
           end
           it 'should create a DocumentBufferItem and schedule the indexing' do
-            expect(AgnosticStore::DocumentBufferItem).
+            expect(AgnosticBackend::DocumentBufferItem).
                 to receive(:create!).with(model_id: subject.id,
                                           model_type: 'IndexableObject',
                                           index_name: 'indexable_objects').
                        and_call_original
-            expect_any_instance_of(AgnosticStore::DocumentBufferItem).to receive(:schedule_indexing)
+            expect_any_instance_of(AgnosticBackend::DocumentBufferItem).to receive(:schedule_indexing)
             subject.enqueue_for_indexing :indexable_objects
           end
         end

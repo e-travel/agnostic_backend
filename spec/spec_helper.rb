@@ -6,4 +6,4 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 ]
 SimpleCov.start 'rails'
 
-require 'agnostic_store'
+require 'agnostic_backend'

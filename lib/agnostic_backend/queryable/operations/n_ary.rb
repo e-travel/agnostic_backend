@@ -1,12 +1,17 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
     module Operations
-      class Operation < TreeNode
+      class NAry < Operation
+
         def initialize(operands = [], context = nil)
           super
         end
+      end
 
-        alias_method :operands, :children
+      class And < NAry;
+      end
+
+      class Or < NAry;
       end
     end
   end

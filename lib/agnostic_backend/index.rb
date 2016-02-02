@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   class Index
 
     def initialize(indexable_klass)

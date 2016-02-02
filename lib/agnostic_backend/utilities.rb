@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   module Utilities
 
     def self.included(base)

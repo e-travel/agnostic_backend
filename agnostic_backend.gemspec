@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'agnostic_store/version'
+require 'agnostic_backend/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "agnostic_store"
-  spec.version       = AgnosticStore::VERSION
+  spec.name          = "agnostic_backend"
+  spec.version       = AgnosticBackend::VERSION
   spec.authors       = ["Iasonas Gavriilidis"]
   spec.email         = ["i.gavriilidis@pamediakopes.gr"]
 

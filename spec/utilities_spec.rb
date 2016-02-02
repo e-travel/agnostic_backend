@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe AgnosticStore::Utilities do
+describe AgnosticBackend::Utilities do
 
   subject do
     Object.send(:remove_const, :DummyObject) if Object.constants.include? :DummyObject
     class DummyObject;
     end
-    DummyObject.send(:include, AgnosticStore::Utilities)
+    DummyObject.send(:include, AgnosticBackend::Utilities)
     DummyObject.new
   end
 

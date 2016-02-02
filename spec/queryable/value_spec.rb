@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::Value do
+describe AgnosticBackend::Queryable::Value do
 
   let(:value) { 1 }
   let(:parent) { double('Parent') }
   let(:context) { double('Context')}
-  subject { AgnosticStore::Queryable::Value.new(value, parent: parent, context: context) }
+  subject { AgnosticBackend::Queryable::Value.new(value, parent: parent, context: context) }
 
   describe '#initialize' do
     it 'should assign the value' do
@@ -20,12 +20,12 @@ describe AgnosticStore::Queryable::Value do
   describe '#==' do
     context 'given two value objects' do
       it 'should be equal if value values are equal' do
-        other_value =  AgnosticStore::Queryable::Value.new(1, parent: parent, context: context)
+        other_value =  AgnosticBackend::Queryable::Value.new(1, parent: parent, context: context)
         expect(subject).to eq other_value
       end
 
       it 'should not be equal if value values are not equal' do
-        other_value =  AgnosticStore::Queryable::Value.new('bar', parent: parent, context: context)
+        other_value =  AgnosticBackend::Queryable::Value.new('bar', parent: parent, context: context)
         expect(subject).not_to eq other_value
       end
     end

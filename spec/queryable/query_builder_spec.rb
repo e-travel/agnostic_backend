@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::QueryBuilder do
+describe AgnosticBackend::Queryable::QueryBuilder do
 
   let(:index) { double('Index') }
 
   subject do
-    AgnosticStore::Queryable::QueryBuilder.new(index)
+    AgnosticBackend::Queryable::QueryBuilder.new(index)
   end
 
   describe '#criteria_builder' do
     it 'should create a CriteriaBuilder' do
-      expect(AgnosticStore::Queryable::CriteriaBuilder).to receive(:new).with(subject).and_call_original
-      expect(subject.criteria_builder).to be_a AgnosticStore::Queryable::CriteriaBuilder
+      expect(AgnosticBackend::Queryable::CriteriaBuilder).to receive(:new).with(subject).and_call_original
+      expect(subject.criteria_builder).to be_a AgnosticBackend::Queryable::CriteriaBuilder
     end
   end
 
@@ -155,7 +155,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
 
     it 'should create a Where Expression with criteria' do
       subject.instance_variable_set(:@criteria, criteria)
-      expect(AgnosticStore::Queryable::Expressions::Where).to receive(:new).with(criteria ,subject)
+      expect(AgnosticBackend::Queryable::Expressions::Where).to receive(:new).with(criteria ,subject)
       subject.send(:build_where_expression)
     end
   end
@@ -165,7 +165,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
 
     it 'should create a Select Expression with projections' do
       subject.instance_variable_set(:@projections, projections)
-      expect(AgnosticStore::Queryable::Expressions::Select).to receive(:new).with(projections ,subject)
+      expect(AgnosticBackend::Queryable::Expressions::Select).to receive(:new).with(projections ,subject)
       subject.send(:build_select_expression)
     end
   end
@@ -175,7 +175,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
 
     it 'should create an Order Expression with order_qualifiers' do
       subject.instance_variable_set(:@order_qualifiers, order_qualifiers)
-      expect(AgnosticStore::Queryable::Expressions::Order).to receive(:new).with(order_qualifiers ,subject)
+      expect(AgnosticBackend::Queryable::Expressions::Order).to receive(:new).with(order_qualifiers ,subject)
       subject.send(:build_order_expression)
     end
   end
@@ -185,7 +185,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
 
     it 'should create a Limit Expression with limit' do
       subject.instance_variable_set(:@limit, limit)
-      expect(AgnosticStore::Queryable::Expressions::Limit).to receive(:new).with(limit ,subject)
+      expect(AgnosticBackend::Queryable::Expressions::Limit).to receive(:new).with(limit ,subject)
       subject.send(:build_limit_expression)
     end
   end
@@ -195,7 +195,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
 
     it 'should create an Offset Expression with offset' do
       subject.instance_variable_set(:@offset, offset)
-      expect(AgnosticStore::Queryable::Expressions::Offset).to receive(:new).with(offset ,subject)
+      expect(AgnosticBackend::Queryable::Expressions::Offset).to receive(:new).with(offset ,subject)
       subject.send(:build_offset_expression)
     end
   end
@@ -205,7 +205,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
     context 'when direction is :asc' do
       let(:ascending_operation) { double('AscendingOperation')}
       it 'should create and Ascending Operation' do
-        expect(AgnosticStore::Queryable::Operations::Ascending).to receive(:new).with(attribute, subject).and_return ascending_operation
+        expect(AgnosticBackend::Queryable::Operations::Ascending).to receive(:new).with(attribute, subject).and_return ascending_operation
         expect(subject.send(:build_order_qualifier, attribute, :asc)).to eq ascending_operation
       end
     end
@@ -214,7 +214,7 @@ describe AgnosticStore::Queryable::QueryBuilder do
       let(:descending_operation) { double('AscendingOperation')}
 
       it 'should create and Descending Operation' do
-        expect(AgnosticStore::Queryable::Operations::Descending).to receive(:new).with(attribute, subject).and_return descending_operation
+        expect(AgnosticBackend::Queryable::Operations::Descending).to receive(:new).with(attribute, subject).and_return descending_operation
         expect(subject.send(:build_order_qualifier, attribute, :desc)).to eq descending_operation
       end
     end

@@ -1,8 +1,8 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
-    class Validator < AgnosticStore::Queryable::Visitor
+    class Validator < AgnosticBackend::Queryable::Visitor
 
-      include AgnosticStore::Utilities
+      include AgnosticBackend::Utilities
 
       def initialize
         @valid = true

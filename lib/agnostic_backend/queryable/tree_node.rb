@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
     class TreeNode
       # include Enumerable
@@ -18,7 +18,7 @@ module AgnosticStore
       def ==(other)
         return true if self.__id__ == other.__id__
         return false if other.nil?
-        return false unless other.is_a? AgnosticStore::Queryable::TreeNode
+        return false unless other.is_a? AgnosticBackend::Queryable::TreeNode
 
         return false unless other.children.size == children.size
         children_pairs = other.children.zip(children)

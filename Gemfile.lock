@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    agnostic_store (0.1.0)
+    agnostic_backend (0.1.0)
       activerecord (>= 3.2.22)
       activesupport (>= 3.2.22)
 
@@ -45,7 +45,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  agnostic_store!
+  agnostic_backend!
   bundler (~> 1.10)
   rake (~> 10.0)
   rspec

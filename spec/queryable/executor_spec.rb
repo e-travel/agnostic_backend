@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::Executor do
+describe AgnosticBackend::Queryable::Executor do
 
   let(:query) { double('Query') }
   let(:visitor) { double('Visitor') }
-  let(:executor) { AgnosticStore::Queryable::Executor.new(query, visitor)}
+  let(:executor) { AgnosticBackend::Queryable::Executor.new(query, visitor)}
 
   describe '#initialize' do
     it 'should assign the query' do

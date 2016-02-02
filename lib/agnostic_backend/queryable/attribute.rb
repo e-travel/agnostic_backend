@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
     class Attribute < TreeNode
       attr_reader :name, :parent

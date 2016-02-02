@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   module Indexable
 
     class << self
@@ -149,7 +149,7 @@ module AgnosticStore
     module ClassMethods
 
       def create_index
-        AgnosticStore::Indexable::Config.create_index_for(self)
+        AgnosticBackend::Indexable::Config.create_index_for(self)
       end
 
       # establishes the convention for determining the index name from the class name
@@ -236,7 +236,7 @@ module AgnosticStore
       def enqueue_for_indexing(index_name)
         index_name = index_name.to_s
         return unless _index_content_managers.has_key? index_name
-        item = AgnosticStore::DocumentBufferItem.create!(model_id: id,
+        item = AgnosticBackend::DocumentBufferItem.create!(model_id: id,
                                                            model_type: self.class.name,
                                                            index_name: index_name)
         item.schedule_indexing

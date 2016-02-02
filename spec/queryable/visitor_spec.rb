@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::Visitor do
+describe AgnosticBackend::Queryable::Visitor do
 
   let(:klass) { double('Class', name: 'Foo::Queryable::Bar::Baz')}
   let(:context) { double('Context', class: klass) }

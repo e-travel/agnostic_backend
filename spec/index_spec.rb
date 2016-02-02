@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe AgnosticStore::Index do
+describe AgnosticBackend::Index do
   let(:index_name) { :tasks }
   let(:indexable_class) { double('IndexableClass') }
 
   subject do
-    AgnosticStore::Index.new(indexable_class)
+    AgnosticBackend::Index.new(indexable_class)
   end
 
   describe '#indexer' do

@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe AgnosticStore::Indexer do
+describe AgnosticBackend::Indexer do
 
   subject do
     index_class = Class.new
-    index = AgnosticStore::Index.new(index_class)
+    index = AgnosticBackend::Index.new(index_class)
 
-    AgnosticStore::Indexer.new(index)
+    AgnosticBackend::Indexer.new(index)
   end
 
   it { expect(subject).to respond_to :index }

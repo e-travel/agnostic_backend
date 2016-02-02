@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
     class CriteriaBuilder
 

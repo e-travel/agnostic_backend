@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::Criteria::Ternary do
+describe AgnosticBackend::Queryable::Criteria::Ternary do
 
   let(:properties) { ['foo', 5, 10] }
   let(:parent) { double('Parent') }
   let(:context) { double('context') }
-  let(:criterion) { AgnosticStore::Queryable::Criteria::Ternary.new(properties, context) }
+  let(:criterion) { AgnosticBackend::Queryable::Criteria::Ternary.new(properties, context) }
 
   context 'inheritance' do
     it 'should inherit from Criterion' do
-      expect(criterion).to be_a_kind_of(AgnosticStore::Queryable::Criteria::Criterion)
+      expect(criterion).to be_a_kind_of(AgnosticBackend::Queryable::Criteria::Criterion)
     end
   end
 
@@ -32,47 +32,47 @@ describe AgnosticStore::Queryable::Criteria::Ternary do
   end
 
   context 'Between Criteria' do
-    let(:between_criterion) { AgnosticStore::Queryable::Criteria::Between.new(properties, context) }
+    let(:between_criterion) { AgnosticBackend::Queryable::Criteria::Between.new(properties, context) }
     describe '#properties_to_attr_value' do
       it 'should return a triple of Attribute and Values objects' do
         attribute = between_criterion.send(:properties_to_attr_value, properties, context)[0]
         left_value = between_criterion.send(:properties_to_attr_value, properties, context)[1]
         right_value = between_criterion.send(:properties_to_attr_value, properties, context)[2]
 
-        expect(attribute).to be_an_instance_of AgnosticStore::Queryable::Attribute
+        expect(attribute).to be_an_instance_of AgnosticBackend::Queryable::Attribute
         expect(attribute.context).to eq context
-        expect(left_value).to be_an_instance_of AgnosticStore::Queryable::Value
+        expect(left_value).to be_an_instance_of AgnosticBackend::Queryable::Value
         expect(left_value.context).to eq context
-        expect(right_value).to be_an_instance_of AgnosticStore::Queryable::Value
+        expect(right_value).to be_an_instance_of AgnosticBackend::Queryable::Value
         expect(right_value.context).to eq context
       end
     end
 
     context 'GreaterAndLess criterion' do
-      let(:greater_and_less_criterion) { AgnosticStore::Queryable::Criteria::GreaterAndLess.new(properties, context) }
+      let(:greater_and_less_criterion) { AgnosticBackend::Queryable::Criteria::GreaterAndLess.new(properties, context) }
       it 'should inherit from Between criterion' do
-        expect(greater_and_less_criterion).to be_a_kind_of AgnosticStore::Queryable::Criteria::Between
+        expect(greater_and_less_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Between
       end
     end
 
     context 'GreaterEqualAndLess criterion' do
-      let(:greater_equal_and_lees_criterion) { AgnosticStore::Queryable::Criteria::GreaterEqualAndLess.new(properties, context) }
+      let(:greater_equal_and_lees_criterion) { AgnosticBackend::Queryable::Criteria::GreaterEqualAndLess.new(properties, context) }
       it 'should inherit from Relational criterion' do
-        expect(greater_equal_and_lees_criterion).to be_a_kind_of AgnosticStore::Queryable::Criteria::Between
+        expect(greater_equal_and_lees_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Between
       end
     end
 
     context 'GreaterAndLessEqual criterion' do
-      let(:greater_and_less_equal_criterion) { AgnosticStore::Queryable::Criteria::GreaterAndLessEqual.new(properties, context) }
+      let(:greater_and_less_equal_criterion) { AgnosticBackend::Queryable::Criteria::GreaterAndLessEqual.new(properties, context) }
       it 'should inherit from Relational criterion' do
-        expect(greater_and_less_equal_criterion).to be_a_kind_of AgnosticStore::Queryable::Criteria::Between
+        expect(greater_and_less_equal_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Between
       end
     end
 
     context 'GreaterEqualAndLessEqual criterion' do
-      let(:greater_equal_and_less_equal_criterion) { AgnosticStore::Queryable::Criteria::GreaterEqualAndLessEqual.new(properties, context) }
+      let(:greater_equal_and_less_equal_criterion) { AgnosticBackend::Queryable::Criteria::GreaterEqualAndLessEqual.new(properties, context) }
       it 'should inherit from Relational criterion' do
-        expect(greater_equal_and_less_equal_criterion).to be_a_kind_of AgnosticStore::Queryable::Criteria::Between
+        expect(greater_equal_and_less_equal_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Between
       end
     end
   end

@@ -1,4 +1,4 @@
-module AgnosticStore
+module AgnosticBackend
   class Indexer
 
     attr_reader :index

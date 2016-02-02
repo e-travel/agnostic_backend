@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::TreeNode do
+describe AgnosticBackend::Queryable::TreeNode do
   describe '#initialize' do
     context 'when no arguments given' do
-      let(:tree_node) { AgnosticStore::Queryable::TreeNode.new }
+      let(:tree_node) { AgnosticBackend::Queryable::TreeNode.new }
 
       it 'should have the default children' do
         expect(tree_node.children).to be_empty
@@ -15,7 +15,7 @@ describe AgnosticStore::Queryable::TreeNode do
 
     context 'when one argument is given' do
       let(:child) { double('Child') }
-      let(:tree_node) { AgnosticStore::Queryable::TreeNode.new([child]) }
+      let(:tree_node) { AgnosticBackend::Queryable::TreeNode.new([child]) }
 
       it 'should have the children provided' do
         expect(tree_node.children).to eq([child])
@@ -28,7 +28,7 @@ describe AgnosticStore::Queryable::TreeNode do
     context 'when two arguments are given' do
       let(:children) { [:foo, :bar] }
       let(:context) { :context }
-      let(:tree_node) { AgnosticStore::Queryable::TreeNode.new(children, context) }
+      let(:tree_node) { AgnosticBackend::Queryable::TreeNode.new(children, context) }
 
       it 'should have the children provided' do
         expect(tree_node.children).to eq(children)
@@ -52,11 +52,11 @@ describe AgnosticStore::Queryable::TreeNode do
       let(:child_2) { double('Child') }
 
       let(:tree_node_1) do
-        AgnosticStore::Queryable::TreeNode.new()
+        AgnosticBackend::Queryable::TreeNode.new()
       end
 
       let(:tree_node_2) do
-        AgnosticStore::Queryable::TreeNode.new([child_2])
+        AgnosticBackend::Queryable::TreeNode.new([child_2])
       end
 
       it 'should return false' do
@@ -67,12 +67,12 @@ describe AgnosticStore::Queryable::TreeNode do
 
     context 'given two tree_node\'s with different classes' do
       let(:tree_node_1) do
-        class TreeNodeOne < AgnosticStore::Queryable::TreeNode; end
+        class TreeNodeOne < AgnosticBackend::Queryable::TreeNode; end
         TreeNodeOne.new
       end
 
       let(:tree_node_2) do
-        class TreeNodeTwo < AgnosticStore::Queryable::TreeNode; end
+        class TreeNodeTwo < AgnosticBackend::Queryable::TreeNode; end
         TreeNodeTwo.new
       end
 
@@ -87,11 +87,11 @@ describe AgnosticStore::Queryable::TreeNode do
       let(:child_2) { double('Child') }
 
       let(:tree_node_1) do
-        AgnosticStore::Queryable::TreeNode.new([child_1])
+        AgnosticBackend::Queryable::TreeNode.new([child_1])
       end
 
       let(:tree_node_2) do
-        AgnosticStore::Queryable::TreeNode.new([child_2])
+        AgnosticBackend::Queryable::TreeNode.new([child_2])
       end
 
       it 'should return false' do
@@ -106,11 +106,11 @@ describe AgnosticStore::Queryable::TreeNode do
 
 
       let(:tree_node_1) do
-        AgnosticStore::Queryable::TreeNode.new([child_1])
+        AgnosticBackend::Queryable::TreeNode.new([child_1])
       end
 
       let(:tree_node_2) do
-        AgnosticStore::Queryable::TreeNode.new([child_2])
+        AgnosticBackend::Queryable::TreeNode.new([child_2])
       end
 
       it 'should return true' do

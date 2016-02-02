@@ -1,7 +1,7 @@
-module AgnosticStore
+module AgnosticBackend
   module Queryable
     class Value < TreeNode
-      include AgnosticStore::Utilities
+      include AgnosticBackend::Utilities
 
       attr_accessor :value
       attr_reader :parent

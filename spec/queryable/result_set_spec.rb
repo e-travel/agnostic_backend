@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe AgnosticStore::Queryable::ResultSet do
+describe AgnosticBackend::Queryable::ResultSet do
 
   subject do
-    AgnosticStore::Queryable::ResultSet.new(raw_results, query)
+    AgnosticBackend::Queryable::ResultSet.new(raw_results, query)
   end
 
   let(:raw_results) { double('raw_results')}
