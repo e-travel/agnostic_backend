@@ -4,7 +4,7 @@ describe AgnosticBackend::Queryable::Value do
 
   let(:value) { 1 }
   let(:parent) { double('Parent') }
-  let(:context) { double('Context')}
+  let(:context) { double('Context') }
   subject { AgnosticBackend::Queryable::Value.new(value, parent: parent, context: context) }
 
   describe '#initialize' do

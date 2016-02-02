@@ -36,6 +36,7 @@ describe AgnosticBackend::Queryable::Operations::Unary do
 
     it 'should map operand to value' do
       expect(order_qualifier_operation.operand).to be_a_kind_of AgnosticBackend::Queryable::Attribute
+      expect(order_qualifier_operation.operand.parent).to eq order_qualifier_operation
     end
   end
 

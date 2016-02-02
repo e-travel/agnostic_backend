@@ -23,14 +23,17 @@ describe AgnosticBackend::Queryable::Criteria::Ternary do
 
       it 'should map attribute to Value instance' do
         expect(between_criterion.attribute).to be_a_kind_of AgnosticBackend::Queryable::Attribute
+        expect(between_criterion.attribute.parent).to eq between_criterion
       end
       
       it 'should map left_value to Value instance' do
         expect(between_criterion.left_value).to be_a_kind_of AgnosticBackend::Queryable::Value
+        expect(between_criterion.left_value.parent).to eq between_criterion
       end
 
       it 'should map right_value to Value instance' do
         expect(between_criterion.right_value).to be_a_kind_of AgnosticBackend::Queryable::Value
+        expect(between_criterion.right_value.parent).to eq between_criterion
       end
     end
 

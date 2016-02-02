@@ -34,10 +34,12 @@ describe AgnosticBackend::Queryable::Criteria::Binary do
 
       it 'should map attribute to Value instance' do
         expect(relational_criterion.attribute).to be_a_kind_of AgnosticBackend::Queryable::Attribute
+        expect(relational_criterion.attribute.parent).to eq relational_criterion
       end
       
       it 'should map value to Value instance' do
         expect(relational_criterion.value).to be_a_kind_of AgnosticBackend::Queryable::Value
+        expect(relational_criterion.value.parent).to eq relational_criterion
       end
     end
 
