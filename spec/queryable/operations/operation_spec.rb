@@ -6,8 +6,8 @@ describe AgnosticBackend::Queryable::Operations::Operation do
   end
 
   context 'aliases' do
-    let(:operands) { [:foo, :bar] }
-    let(:context) { :context }
+    let(:operands) { ['foo', 'bar'] }
+    let(:context) { double('Context') }
     let(:operation) { AgnosticBackend::Queryable::Operations::Operation.new(operands, context) }
 
     describe '#operators' do

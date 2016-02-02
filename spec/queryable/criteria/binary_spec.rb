@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe AgnosticBackend::Queryable::Criteria::Binary do
 
-  let(:properties) { ['foo', 'bar'] }
-  let(:parent) { double('Parent') }
+  let(:attribute) { 'foo' }
+  let(:value) { 'bar' }
   let(:context) { double('Context') }
-  let(:criterion) { AgnosticBackend::Queryable::Criteria::Binary.new(properties, context) }
+  let(:criterion) { AgnosticBackend::Queryable::Criteria::Binary.new(attribute: attribute, value: value, context: context) }
 
   context 'inheritance' do
     it 'should inherit form criterion' do
@@ -14,76 +14,72 @@ describe AgnosticBackend::Queryable::Criteria::Binary do
   end
 
   describe '#attribute' do
-    it 'should be first child' do
+    it 'should be the attribute component' do
       expect(criterion.attribute).to eq('foo')
     end
   end
 
   describe '#value' do
-    it 'should be second child' do
+    it 'should be the value component' do
       expect(criterion.value).to eq('bar')
     end
   end
 
   context 'Relational Criteria' do
     context 'Relational Criterion' do
-      let(:relational_criterion) { AgnosticBackend::Queryable::Criteria::Relational.new(properties, context) }
+      let(:relational_criterion) { AgnosticBackend::Queryable::Criteria::Relational.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Binary criterion' do
         expect(relational_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Binary
       end
 
-      describe '#properties_to_attr_value' do
-        it 'should return a pair of Attribute and Value objects' do
-          attribute = relational_criterion.send(:properties_to_attr_value, properties, context)[0]
-          value = relational_criterion.send(:properties_to_attr_value, properties, context)[1]
-
-          expect(attribute).to be_an_instance_of AgnosticBackend::Queryable::Attribute
-          expect(attribute.context).to eq context
-          expect(value).to be_an_instance_of AgnosticBackend::Queryable::Value
-          expect(value.context).to eq context
-        end
+      it 'should map attribute to Value instance' do
+        expect(relational_criterion.attribute).to be_a_kind_of AgnosticBackend::Queryable::Attribute
+      end
+      
+      it 'should map value to Value instance' do
+        expect(relational_criterion.value).to be_a_kind_of AgnosticBackend::Queryable::Value
       end
     end
 
     context 'Equal Criterion' do
-      let(:equal_criterion) { AgnosticBackend::Queryable::Criteria::Equal.new(properties, context) }
+      let(:equal_criterion) { AgnosticBackend::Queryable::Criteria::Equal.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
         expect(equal_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
       end
     end
 
     context 'NotEqual Criterion' do
-      let(:not_equal_criterion) { AgnosticBackend::Queryable::Criteria::NotEqual.new(properties, context) }
+      let(:not_equal_criterion) { AgnosticBackend::Queryable::Criteria::NotEqual.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
         expect(not_equal_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
       end
     end
 
     context 'Greater Criterion' do
-      let(:greater_criterion) { AgnosticBackend::Queryable::Criteria::Greater.new(properties, context) }
+      let(:greater_criterion) { AgnosticBackend::Queryable::Criteria::Greater.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
         expect(greater_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
       end
     end
 
     context 'Less Criterion' do
-      let(:less_criterion) { AgnosticBackend::Queryable::Criteria::Less.new(properties, context) }
+      let(:less_criterion) { AgnosticBackend::Queryable::Criteria::Less.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
         expect(less_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
       end
     end
 
-    context 'Contain Criterion' do
-      let(:contain_criterion) { AgnosticBackend::Queryable::Criteria::Contain.new(properties, context) }
+    context 'Contains Criterion' do
+      let(:contains_criterion) { AgnosticBackend::Queryable::Criteria::Contains.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
-        expect(contain_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
+        expect(contains_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
       end
     end
 
     context 'Start Criterion' do
-      let(:start_criterion) { AgnosticBackend::Queryable::Criteria::Start.new(properties, context) }
+      let(:starts_criterion) { AgnosticBackend::Queryable::Criteria::Starts.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
-        expect(start_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
+        expect(starts_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
       end
     end
   end

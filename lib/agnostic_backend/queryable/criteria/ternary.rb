@@ -2,37 +2,20 @@ module AgnosticBackend
   module Queryable
     module Criteria
       class Ternary < Criterion
+        attr_reader :attribute, :left_value, :right_value
 
-        def initialize(properties = [], context = nil)
-          super
-        end
-
-        def attribute
-          properties[0]
-        end
-
-        def left_value
-          properties[1]
-        end
-
-        def right_value
-          properties[2]
+        def initialize(attribute:, left_value:, right_value:, context: nil)
+          @attribute, @left_value, @right_value = attribute, left_value, right_value
+          super([attribute, left_value, right_value], context)
         end
       end
 
       class Between < Ternary
-        def initialize(properties = [], context)
-          super(properties_to_attr_value(properties, context), context)
-        end
-
-        private
-
-        def properties_to_attr_value(properties, context)
-          attribute = Attribute.new(properties[0], parent: self, context: context)
-          left_value = Value.new(properties[1], parent: self, context: context)
-          right_value = Value.new(properties[2], parent: self, context: context)
-
-          [attribute, left_value, right_value]
+        def initialize(attribute:, left_value:, right_value:, context: nil)
+          attribute = attribute_component(attribute: attribute, context: context)
+          left_value = value_component(value: left_value, context: context)
+          right_value = value_component(value: right_value, context: context)
+          super(attribute: attribute, left_value: left_value, right_value: right_value, context: context)
         end
       end
 

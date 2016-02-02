@@ -32,6 +32,16 @@ module AgnosticBackend
       def accept(visitor)
         visitor.visit(self)
       end
+
+     private
+
+      def attribute_component(attribute:, context: nil)
+        Attribute.new(attribute, parent: self, context: context)
+      end
+
+      def value_component(value:, context: nil)
+        Value.new(value, parent: self, context: context)
+      end
     end
   end
 end

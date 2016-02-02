@@ -2,11 +2,11 @@ module AgnosticBackend
   module Queryable
     module Criteria
       class Criterion < TreeNode
-        def initialize(properties = [], context = nil)
+        def initialize(components = [], context = nil)
           super
         end
 
-        alias_method :properties, :children
+        alias_method :components, :children
       end
     end
   end

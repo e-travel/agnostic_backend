@@ -26,13 +26,14 @@ describe AgnosticBackend::Queryable::TreeNode do
     end
 
     context 'when two arguments are given' do
-      let(:children) { [:foo, :bar] }
-      let(:context) { :context }
+      let(:children) { [double('LeftChild'), double('RightChild')] }
+      let(:context) { double('Context') }
       let(:tree_node) { AgnosticBackend::Queryable::TreeNode.new(children, context) }
 
       it 'should have the children provided' do
         expect(tree_node.children).to eq(children)
       end
+
       it 'should have the context provided' do
         expect(tree_node.context).to eq(context)
       end
@@ -82,7 +83,7 @@ describe AgnosticBackend::Queryable::TreeNode do
       end
     end
 
-    context 'given two tree_node\'s with at letree_node one  child unequal' do
+    context 'given two tree_node\'s with at least one child unequal' do
       let(:child_1) { double('Child') }
       let(:child_2) { double('Child') }
 
@@ -117,6 +118,25 @@ describe AgnosticBackend::Queryable::TreeNode do
         expect(child_1).to receive(:==).with(child_2).and_return true
         expect(tree_node_1).to eq tree_node_2
       end
+    end
+  end
+
+  let(:tree_node) { AgnosticBackend::Queryable::TreeNode.new }
+  let(:context) { double('Context') }
+
+  describe '#attribute_component' do
+    it 'should return an Attribute instance' do
+      attribute = tree_node.send(:attribute_component, attribute: attribute, context: context)
+      expect(attribute).to be_an_instance_of AgnosticBackend::Queryable::Attribute
+      expect(attribute.context).to eq context
+    end
+  end
+
+  describe '#value_component' do
+    it 'should return a Value instance' do
+      value = tree_node.send(:value_component, value: value, context: context)
+      expect(value).to be_an_instance_of AgnosticBackend::Queryable::Value
+      expect(value.context).to eq context
     end
   end
 end

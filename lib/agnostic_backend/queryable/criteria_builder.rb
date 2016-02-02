@@ -9,71 +9,71 @@ module AgnosticBackend
       end
 
       def eq(attribute, value)
-        Criteria::Equal.new([attribute, value], context)
+        Criteria::Equal.new(attribute: attribute, value: value, context: context)
       end
 
       def neq(attribute, value)
-        Criteria::NotEqual.new([attribute, value], context)
+        Criteria::NotEqual.new(attribute: attribute, value: value, context: context)
       end
 
       def gt(attribute, value)
-        Criteria::Greater.new([attribute, value], context)
+        Criteria::Greater.new(attribute: attribute, value: value, context: context)
       end
 
       def lt(attribute, value)
-        Criteria::Less.new([attribute, value], context)
+        Criteria::Less.new(attribute: attribute, value: value, context: context)
       end
 
       def ge(attribute, value)
-        Criteria::GreaterEqual.new([attribute, value], context)
+        Criteria::GreaterEqual.new(attribute: attribute, value: value, context: context)
       end
 
       def le(attribute, value)
-        Criteria::LessEqual.new([attribute, value], context)
+        Criteria::LessEqual.new(attribute: attribute, value: value, context: context)
       end
 
       def gt_and_lt(attribute, left_limit, right_limit)
-        Criteria::GreaterAndLess.new([attribute, left_limit, right_limit], context)
+        Criteria::GreaterAndLess.new(attribute: attribute, left_value: left_limit, right_value: right_limit, context: context)
       end
 
       def gt_and_le(attribute, left_limit, right_limit)
-        Criteria::GreaterAndLessEqual.new([attribute, left_limit, right_limit], context)
+        Criteria::GreaterAndLessEqual.new(attribute: attribute, left_value: left_limit, right_value: right_limit, context: context)
       end
 
       def ge_and_lt(attribute, left_limit, right_limit)
-        Criteria::GreaterEqualAndLess.new([attribute, left_limit, right_limit], context)
+        Criteria::GreaterEqualAndLess.new(attribute: attribute, left_value: left_limit, right_value: right_limit, context: context)
       end
 
       def ge_and_le(attribute, left_limit, right_limit)
-        Criteria::GreaterEqualAndLessEqual.new([attribute, left_limit, right_limit], context)
+        Criteria::GreaterEqualAndLessEqual.new(attribute: attribute, left_value: left_limit, right_value: right_limit, context: context)
       end
 
       def contains(attribute, value)
-        Criteria::Contain.new([attribute, value], context)
+        Criteria::Contains.new(attribute: attribute, value: value, context: context)
       end
 
       def starts(attribute, value)
-        Criteria::Start.new([attribute, value], context)
+        Criteria::Starts.new(attribute: attribute, value: value, context: context)
       end
 
       def asc(attribute)
-        Operations::Ascending.new([attribute], context)
+        Operations::Ascending.new(attribute: attribute, context: context)
       end
 
       def desc(attribute)
-        Operations::Descending.new([attribute], context)
+        Operations::Descending.new(attribute: attribute, context: context)
       end
 
       def not(criterion)
-        Operations::Not.new([criterion], context)
+        Operations::Not.new(operand: criterion, context: context)
       end
 
       def and(*criteria)
-        Operations::And.new(criteria, context)
+        Operations::And.new(operands: criteria, context: context)
       end
 
       def or(*criteria)
-        Operations::Or.new(criteria, context)
+        Operations::Or.new(operands: criteria, context: context)
       end
 
       alias_method :all, :and

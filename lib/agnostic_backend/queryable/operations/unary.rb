@@ -2,35 +2,27 @@ module AgnosticBackend
   module Queryable
     module Operations
       class Unary < Operation
+        attr_reader :operand
 
-        def initialize(operands = [], context = nil)
-          super
-        end
-
-        def operand
-          operands[0]
+        def initialize(operand:, context: nil)
+          @operand = operand
+          super([operand], context)
         end
       end
 
       class Not < Unary
-        def initialize(operand, context)
-          super
+        def initialize(operand:, context:)
+          super(operand: operand, context: context)
         end
       end
 
       class OrderQualifier < Unary
-        def initialize(attribute = [], context = nil)
-          super(map_attribute(attribute, context), context)
+        def initialize(attribute:, context: nil)
+          attribute = attribute_component(attribute: attribute, context: context)
+          super(operand: attribute, context: context)
         end
 
         alias_method :attribute, :operand
-
-        private
-
-        def map_attribute(attribute, context)
-          attribute = Attribute.new(attribute, parent: self, context: context)
-          [attribute]
-        end
       end
 
       class Ascending < OrderQualifier;

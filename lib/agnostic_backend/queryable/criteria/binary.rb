@@ -2,32 +2,20 @@ module AgnosticBackend
   module Queryable
     module Criteria
       class Binary < Criterion
-        def initialize(properties = [], base = nil)
-          super
-        end
+        attr_reader :attribute, :value
 
-        def attribute
-          properties[0]
-        end
-
-        def value
-          properties[1]
+        def initialize(attribute:, value:, context: nil)
+          @attribute, @value = attribute, value
+          super([attribute, value], context)
         end
       end
 
       class Relational < Binary
 
-        def initialize(properties = [], context = nil)
-          super(properties_to_attr_value(properties, context), context)
-        end
-
-        private
-
-        def properties_to_attr_value(properties, context)
-          attribute = Attribute.new(properties[0], parent: self, context: context)
-          value = Value.new(properties[1], parent: self, context: context)
-
-          [attribute, value]
+        def initialize(attribute:, value:, context: nil)
+          attribute = attribute_component(attribute: attribute, context: context)
+          value = value_component(value: value, context: context)
+          super(attribute: attribute, value: value, context: context)
         end
       end
 
@@ -49,10 +37,10 @@ module AgnosticBackend
       class LessEqual < Relational;
       end
 
-      class Contain < Relational;
+      class Contains < Relational;
       end
 
-      class Start < Relational;
+      class Starts < Relational;
       end
     end
   end

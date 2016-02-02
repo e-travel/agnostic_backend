@@ -6,13 +6,13 @@ describe AgnosticBackend::Queryable::Criteria::Criterion do
   end
 
   context 'aliases' do
-    let(:properties) { [:foo, :bar] }
+    let(:components) { ['foo', 'bar'] }
     let(:context) { double('Context') }
-    let(:criterion) { AgnosticBackend::Queryable::Criteria::Criterion.new(properties, context) }
+    let(:criterion) { AgnosticBackend::Queryable::Criteria::Criterion.new(components, context) }
 
-    describe '#properties' do
+    describe '#components' do
       it 'should be alias of children' do
-        expect(criterion.properties).to eq(criterion.children)
+        expect(criterion.components).to eq(criterion.children)
       end
     end
   end
