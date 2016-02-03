@@ -6,21 +6,21 @@ module AgnosticBackend
         send(method_name, subject)
       end
 
+      private
+
       def class_to_method_name(klass)
         if klass.name.split('::').last == 'Query'
           'visit_query'
         else
-          "visit_#{klass.name.split('Queryable::').last.gsub('::', '_').downcase}"
+          "visit_#{klass.name.split('Queryable::').last.gsub('::', '_').underscore}"
         end
       end
-
-      private
 
       def visit_operations_equal(subject)
         raise NotImplementedError
       end
 
-      def visit_operations_notequal(subject)
+      def visit_operations_not_equal(subject)
         raise NotImplementedError
       end
 
@@ -32,7 +32,7 @@ module AgnosticBackend
         raise NotImplementedError
       end
 
-      def visit_operations_greaterequal(subject)
+      def visit_operations_greater_equal(subject)
         raise NotImplementedError
       end
 
@@ -40,19 +40,19 @@ module AgnosticBackend
         raise NotImplementedError
       end
 
-      def visit_operations_greaterandless(subject)
+      def visit_operations_greater_and_less(subject)
         raise NotImplementedError
       end
 
-      def visit_operations_greaterequalandless(subject)
+      def visit_operations_greater_equal_and_less(subject)
         raise NotImplementedError
       end
 
-      def visit_operations_greaterandlessequal(subject)
+      def visit_operations_greater_and_less_equal(subject)
         raise NotImplementedError
       end
 
-      def visit_operations_greaterequalandlessequal(subject)
+      def visit_operations_greater_equal_and_less_equal(subject)
         raise NotImplementedError
       end
 
@@ -76,11 +76,11 @@ module AgnosticBackend
         raise NotImplementedError
       end
 
-      def visit_operations_contain(subject)
+      def visit_operations_contains(subject)
         raise NotImplementedError
       end
 
-      def visit_operations_start(subject)
+      def visit_operations_starts(subject)
         raise NotImplementedError
       end
 
@@ -105,6 +105,10 @@ module AgnosticBackend
       end
 
       def visit_expressions_offset(subject)
+        raise NotImplementedError
+      end
+
+      def visit_expressions_scroll_cursor(subject)
         raise NotImplementedError
       end
 

@@ -13,8 +13,8 @@ module AgnosticBackend
         CriteriaBuilder.new(self)
       end
 
-      def where(criteria)
-        @criteria = criteria
+      def where(criterion)
+        @criterion = criterion
         self
       end
 
@@ -38,13 +38,19 @@ module AgnosticBackend
         self
       end
 
+      def scroll_cursor(value)
+        @scroll_cursor = value
+        self
+      end
+
       def build
         query = create_query(self)
-        query.children << build_where_expression if @criteria
+        query.children << build_where_expression if @criterion
         query.children << build_select_expression if @projections
         query.children << build_order_expression if @order_qualifiers
         query.children << build_limit_expression if @limit
         query.children << build_offset_expression if @offset
+        query.children << build_scroll_cursor_expression if @scroll_cursor
 
         @query = query
       end
@@ -56,31 +62,35 @@ module AgnosticBackend
       end
 
       def build_where_expression
-        Expressions::Where.new(@criteria, self)
+        Expressions::Where.new(criterion: @criterion, context: self)
       end
 
       def build_select_expression
-        Expressions::Select.new(@projections, self)
+        Expressions::Select.new(attributes: @projections, context: self)
       end
 
       def build_order_expression
-        Expressions::Order.new(@order_qualifiers, self)
+        Expressions::Order.new(attributes: @order_qualifiers, context: self)
       end
 
       def build_limit_expression
-        Expressions::Limit.new(@limit, self)
+        Expressions::Limit.new(value: @limit, context: self)
       end
 
       def build_offset_expression
-        Expressions::Offset.new(@offset, self)
+        Expressions::Offset.new(value: @offset, context: self)
+      end
+
+      def build_scroll_cursor_expression
+        Expressions::Offset.new(value: @scroll_cursor, context: self)
       end
 
       def build_order_qualifier(attribute, direction)
         case direction
           when :asc
-            Operations::Ascending.new(attribute, self)
+            Operations::Ascending.new(attribute: attribute, context: self)
           when :desc
-            Operations::Descending.new(attribute, self)
+            Operations::Descending.new(attribute: attribute, context: self)
         end
       end
     end

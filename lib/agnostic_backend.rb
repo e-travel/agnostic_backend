@@ -33,6 +33,19 @@ require 'agnostic_backend/queryable/operations/n_ary'
 
 require 'agnostic_backend/queryable/expressions/expression'
 
+require 'agnostic_backend/queryable/cloudsearch/executor'
+require 'agnostic_backend/queryable/cloudsearch/query'
+require 'agnostic_backend/queryable/cloudsearch/query_builder'
+require 'agnostic_backend/queryable/cloudsearch/result_set'
+require 'agnostic_backend/queryable/cloudsearch/visitor'
+
+require 'agnostic_backend/cloudsearch/index'
+require 'agnostic_backend/cloudsearch/index_field'
+require 'agnostic_backend/cloudsearch/indexer'
+require 'agnostic_backend/cloudsearch/manager'
+require 'agnostic_backend/cloudsearch/remote_index_field'
+
+
 module AgnosticBackend
 
 end

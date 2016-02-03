@@ -5,31 +5,32 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
     it { should be_a_kind_of(AgnosticBackend::Queryable::TreeNode) }
   end
 
-  let(:operator) { [:foo] }
-  let(:base) { :base }
+  let(:index) { double('Index') }
+  let(:context) { double('Context', index: index) }
   let(:expression) { AgnosticBackend::Queryable::Expressions::Expression.new(operator, base) }
 
-
   context 'Where Expression' do
-    let(:restrictions) { [:foo, :bar, :baz]}
-    let(:where_expression) { AgnosticBackend::Queryable::Expressions::Where.new([restrictions], base) }
+    let(:an_equal_criterion) { AgnosticBackend::Queryable::Criteria::Equal.new(attribute: 'an_integer', value: 10, context: context)}
+    let(:a_not_equal_criterion) { AgnosticBackend::Queryable::Criteria::Equal.new(attribute: 'a_string', value: 'value', context: context)}
+    let(:and_criterion) { AgnosticBackend::Queryable::Operations::And.new(operands: [an_equal_criterion, a_not_equal_criterion], context: context)}
+    let(:where_expression) { AgnosticBackend::Queryable::Expressions::Where.new(criterion: and_criterion, context: context)}
 
     it 'should inherit from Expression' do
       expect(where_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
     end
 
     context 'aliases' do
-      describe '#restrictions' do
-        it 'should be alias of children' do
-          expect(where_expression.restrictions).to eq(where_expression.children)
+      describe '#criterion' do
+        it 'should be the first children' do
+          expect(where_expression.criterion).to eq(where_expression.children.first)
         end
       end
     end
   end
 
   context 'Select Expression' do
-    let(:projections) { [:foo, :bar, :baz]}
-    let(:select_expression) { AgnosticBackend::Queryable::Expressions::Select.new([projections], base) }
+    let(:projections) { ['an_integer','a_string','a_date'] }
+    let(:select_expression) { AgnosticBackend::Queryable::Expressions::Select.new(attributes: [projections], context: context) }
 
     it 'should inherit from Expression' do
       expect(select_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
@@ -49,8 +50,9 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
   end
 
   context 'Order Expression' do
-    let(:qualifiers) { [double('AscendingOrder'), double('DescendingOrder')] }
-    let(:order_expression) { AgnosticBackend::Queryable::Expressions::Order.new([qualifiers], base) }
+    let(:ascending_qualifier) { AgnosticBackend::Queryable::Operations::Ascending.new(attribute: 'a_string', context: context) }
+    let(:descending_qualifier) { AgnosticBackend::Queryable::Operations::Ascending.new(attribute: 'an_integer', context: context) }
+    let(:order_expression) { AgnosticBackend::Queryable::Expressions::Order.new(attributes: [ascending_qualifier, descending_qualifier], context: context) }
 
     it 'should inherit from Expression' do
       expect(order_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
@@ -67,7 +69,7 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
 
   context 'Limit Expression' do
     let(:limit) { 1 }
-    let(:limit_expression) { AgnosticBackend::Queryable::Expressions::Limit.new(limit, base) }
+    let(:limit_expression) { AgnosticBackend::Queryable::Expressions::Limit.new(value: limit, context: context) }
 
     it 'should inherit from Expression' do
       expect(limit_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
@@ -86,7 +88,7 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
 
   context 'Offset Expression' do
     let(:offset) { 1 }
-    let(:offset_expression) { AgnosticBackend::Queryable::Expressions::Offset.new(offset, base) }
+    let(:offset_expression) { AgnosticBackend::Queryable::Expressions::Offset.new(value: offset, context: context) }
 
     it 'should inherit from Expression' do
       expect(offset_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
@@ -99,6 +101,25 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
     describe '#offset' do
       it 'should be first child' do
         expect(offset_expression.offset).to eq(offset_expression.children.first)
+      end
+    end
+  end
+
+  context 'Scroll Cursor Expression' do
+    let(:scroll_cursor) { 'foo' }
+    let(:scroll_cursor_expression) { AgnosticBackend::Queryable::Expressions::ScrollCursor.new(value: scroll_cursor, context: context) }
+
+    it 'should inherit from Expression' do
+      expect(scroll_cursor_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
+    end
+
+    it 'should map scroll cursor to value' do
+      expect(scroll_cursor_expression.scroll_cursor).to be_a AgnosticBackend::Queryable::Value
+    end
+
+    describe '#scroll_cursor' do
+      it 'should be first child' do
+        expect(scroll_cursor_expression.scroll_cursor).to eq(scroll_cursor_expression.children.first)
       end
     end
   end

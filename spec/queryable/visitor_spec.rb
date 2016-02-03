@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AgnosticBackend::Queryable::Visitor do
 
-  let(:klass) { double('Class', name: 'Foo::Queryable::Bar::Baz')}
+  let(:klass) { double('Class', name: 'Foo::Queryable::Bar::BazFoo')}
   let(:context) { double('Context', class: klass) }
 
   describe '#visit' do
@@ -15,7 +15,7 @@ describe AgnosticBackend::Queryable::Visitor do
 
   describe '#class_to_method_name' do
     it 'should prefix visit split the string in Queryable:: and join with _' do
-      expect(subject.class_to_method_name(context.class)).to eq 'visit_bar_baz'
+      expect(subject.send(:class_to_method_name, context.class)).to eq 'visit_bar_baz_foo'
     end
   end
 end
