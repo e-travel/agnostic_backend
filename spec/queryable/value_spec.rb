@@ -31,33 +31,60 @@ describe AgnosticBackend::Queryable::Value do
     end
   end
 
-  describe '#type' do
+  describe '#associated_attribute' do
     context 'when associated attribute is absent' do
       it 'should return nil' do
         expect(parent).not_to respond_to :attribute
-        expect(subject.type).to be_nil
+        expect(subject.associated_attribute).to be_nil
+      end
+    end
+
+    context 'when associated attribute is present' do
+      it 'should return attribute if associated attribute is defined in schema' do
+        index = double('Index', schema: {'foo' => double('FieldType', type: :integer)})
+
+        attribute = double('Attribute', name: 'foo')
+
+        expect(parent).to receive(:attribute).and_return attribute
+        expect(subject.associated_attribute).to eq attribute
+      end
+
+      it 'should return attribute if associated attribute is defined in schema as association' do
+        index = double('Index', schema: {'foo' => {'bar' => {'baz' => double('FieldType', type: :integer)}}})
+
+        attribute = double('Attribute', name: 'foo.bar.baz')
+
+        expect(parent).to receive(:attribute).and_return attribute
+        expect(subject.associated_attribute).to eq attribute
+      end
+    end
+  end
+
+  describe '#type' do
+    context 'when associated attribute is absent' do
+      it 'should return nil' do
+        expect(subject).to receive(:associated_attribute).and_return nil
+        expect(subject.associated_attribute).to be_nil
       end
     end
 
     context 'when associated attribute is present' do
       it 'should return attribute type if associated attribute is defined in schema' do
         index = double('Index', schema: {'foo' => double('FieldType', type: :integer)})
-        context = double('context', index: index)
-
+        context = double('Context', index: index)
         attribute = double('Attribute', name: 'foo')
 
-        expect(parent).to receive(:attribute).and_return attribute
+        expect(subject).to receive(:associated_attribute).twice.and_return attribute
         expect(parent).to receive(:context).and_return context
         expect(subject.type).to eq :integer
       end
 
-      it 'should return attribute type if associated attribute is defined in schema as association' do
+      it 'should return attribute if associated attribute is defined in schema as association' do
         index = double('Index', schema: {'foo' => {'bar' => {'baz' => double('FieldType', type: :integer)}}})
-        context = double('context', index: index)
-
+        context = double('Context', index: index)
         attribute = double('Attribute', name: 'foo.bar.baz')
 
-        expect(parent).to receive(:attribute).and_return attribute
+        expect(subject).to receive(:associated_attribute).twice.and_return attribute
         expect(parent).to receive(:context).and_return context
         expect(subject.type).to eq :integer
       end

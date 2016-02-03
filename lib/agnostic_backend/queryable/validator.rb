@@ -125,13 +125,64 @@ module AgnosticBackend
 
       def visit_attribute(subject)
         if value_for_key(subject.context.index.schema, subject.name).nil?
-          subject.context.query.errors[subject.class.name] << "Attribute '#{subject.name}' in #{subject.parent.class.name} missing from schema"
+          subject.context.query.errors[subject.class.name] << attribute_error(subject)
           @valid = false
         end
       end
 
       def visit_value(subject)
-        true
+        case subject.type
+        when :integer
+          unless subject.value.is_a?(Fixnum)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :double
+          unless subject.value.is_a?(Float)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :string
+          unless subject.value.is_a?(String)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :string_array
+          unless subject.value.is_a?(String)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :text
+          unless subject.value.is_a?(String)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :text_array
+          unless subject.value.is_a?(String)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :date
+          unless subject.value.is_a?(DateTime)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        when :boolean
+          unless subject.value.is_a?(TrueClass) || subject.value.is_a?(FalseClass)
+            subject.context.query.errors[subject.class.name] << value_error(subject)
+            @valid = false
+          end
+        else
+          true
+        end
+      end
+
+      def value_error(subject)
+        "Value #{subject.value} for #{subject.associated_attribute.name} in #{subject.parent.class.name} is defined as #{subject.type} type in schema"
+      end
+
+      def attribute_error(subject)
+        "Attribute '#{subject.name}' in #{subject.parent.class.name} missing from schema"
       end
     end
   end

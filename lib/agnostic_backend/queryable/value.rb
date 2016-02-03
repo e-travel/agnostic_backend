@@ -15,8 +15,11 @@ module AgnosticBackend
         super && o.value == value
       end
 
+      def associated_attribute
+        parent.attribute if parent.respond_to? :attribute
+      end
+
       def type
-        associated_attribute = parent.attribute if parent.respond_to? :attribute
         value_for_key(parent.context.index.schema, associated_attribute.name).try(:type) if associated_attribute
       end
     end
