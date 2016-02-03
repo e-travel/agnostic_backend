@@ -3,7 +3,13 @@ require 'active_record'
 require 'active_support/core_ext'
 
 require 'agnostic_backend/utilities'
-require 'agnostic_backend/indexable'
+
+require 'agnostic_backend/indexable/indexable'
+require 'agnostic_backend/indexable/config'
+require 'agnostic_backend/indexable/field_type'
+require 'agnostic_backend/indexable/field'
+require 'agnostic_backend/indexable/content_manager'
+
 require 'agnostic_backend/index'
 require 'agnostic_backend/indexer'
 
