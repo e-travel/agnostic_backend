@@ -4,12 +4,15 @@ describe AgnosticBackend::Indexable do
 
   describe 'Indexable functionality' do
 
-    let(:field_block) { proc { string :a; string 'b', value: 'b'; string :c, value: proc { a_message } } }
+    let(:field_block) { proc {
+                          string :a;
+                          string 'b', value: 'b';
+                          string :c, value: proc { a_message }
+                        } }
 
     before do
       Object.send(:remove_const, :IndexableObject) if Object.constants.include? :IndexableObject
       class IndexableObject; end
-      allow(IndexableObject).to receive(:<).with(ActiveRecord::Base).and_return true
       IndexableObject.send(:include, AgnosticBackend::Indexable)
     end
 
@@ -224,7 +227,6 @@ describe AgnosticBackend::Indexable do
           before do
             expect(subject).not_to respond_to :_index_root_notifiers
             expect(IndexableObject).to receive(:define_method).and_call_original
-            expect(IndexableObject).to receive(:after_commit)
             # trigger method
             IndexableObject.define_index_notifier { root }
           end
@@ -313,7 +315,7 @@ describe AgnosticBackend::Indexable do
           before { IndexableObject.define_index_notifier { self } }
           it 'should notify the notifier' do
             expect(subject).to receive(:enqueue_for_indexing).with('indexable_objects')
-            subject.send(:trigger_index_notification_on_save)
+            subject.send(:trigger_index_notification)
           end
         end
         context 'when multiple targets have been defined' do
@@ -324,43 +326,20 @@ describe AgnosticBackend::Indexable do
           end
           it 'should notify the notifier' do
             targets.each {|target| expect(target).to receive(:enqueue_for_indexing).with('indexable_objects')}
-            subject.send(:trigger_index_notification_on_save)
+            subject.send(:trigger_index_notification)
           end
         end
         context 'when a target has not been defined' do
           it 'should do nothing' do
             expect(subject).not_to respond_to :_index_root_notifiers
             expect(subject).to receive(:respond_to?).with(:_index_root_notifiers).and_call_original
-            expect(subject.send(:trigger_index_notification_on_save)).to be_nil
+            expect(subject.send(:trigger_index_notification)).to be_nil
           end
         end
       end
 
       describe '#enqueue_for_indexing' do
-        context 'when index_name has not been defined' do
-          before { allow(subject).to receive(:_index_content_managers).and_return({}) }
-          it 'should do nothing' do
-            expect(AgnosticBackend::DocumentBufferItem).not_to receive(:create)
-            subject.enqueue_for_indexing :not_there
-          end
-        end
-
-        context 'when index_name is defined' do
-          let(:managers) { {'indexable_objects' => :manager} }
-          before do
-            allow(subject).to receive(:_index_content_managers).and_return managers
-            allow(subject).to receive(:id).and_return 111
-          end
-          it 'should create a DocumentBufferItem and schedule the indexing' do
-            expect(AgnosticBackend::DocumentBufferItem).
-                to receive(:create!).with(model_id: subject.id,
-                                          model_type: 'IndexableObject',
-                                          index_name: 'indexable_objects').
-                       and_call_original
-            expect_any_instance_of(AgnosticBackend::DocumentBufferItem).to receive(:schedule_indexing)
-            subject.enqueue_for_indexing :indexable_objects
-          end
-        end
+        it { expect{ subject.enqueue_for_indexing :not_there }.to raise_error /NotImplementedError/}
       end
     end
   end

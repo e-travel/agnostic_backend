@@ -1,5 +1,4 @@
 require 'agnostic_backend/version'
-require 'active_record'
 require 'active_support/core_ext'
 
 require 'agnostic_backend/utilities'

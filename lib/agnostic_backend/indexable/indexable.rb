@@ -10,7 +10,6 @@ module AgnosticBackend
     end
 
     def self.included(base)
-      raise "Can not include Indexable module to a non-ActiveRecord class" unless base < ActiveRecord::Base
       @includers ||= []
       @includers << base unless @includers.include? base
       base.send :include, InstanceMethods
@@ -80,7 +79,6 @@ module AgnosticBackend
         _index_root_notifiers[index_name(target)] = block
         unless instance_methods(false).include? :_index_root_notifiers
           define_method(:_index_root_notifiers) { self.class._index_root_notifiers }
-          send :after_commit, :trigger_index_notification_on_save
         end
       end
     end
@@ -106,17 +104,12 @@ module AgnosticBackend
       end
 
       def enqueue_for_indexing(index_name)
-        index_name = index_name.to_s
-        return unless _index_content_managers.has_key? index_name
-        item = AgnosticBackend::DocumentBufferItem.create!(model_id: id,
-                                                           model_type: self.class.name,
-                                                           index_name: index_name)
-        item.schedule_indexing
+        raise NotImplementedError
       end
 
       private
 
-      def trigger_index_notification_on_save
+      def trigger_index_notification
         return unless respond_to? :_index_root_notifiers
         _index_root_notifiers.each do |index_name, block|
           obj = instance_eval &block
