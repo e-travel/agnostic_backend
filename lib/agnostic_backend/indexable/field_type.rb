@@ -19,7 +19,7 @@ module AgnosticBackend
         all.include? type
       end
 
-      attr_reader :type
+      attr_reader :type, :options
 
       def initialize(type, **options)
         raise "Type #{type} not supported" unless FieldType.exists? type
@@ -29,6 +29,10 @@ module AgnosticBackend
 
       def nested?
         type == STRUCT
+      end
+
+      def matches?(type)
+        self.type == type
       end
 
       def get_option(option_name)

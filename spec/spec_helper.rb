@@ -1,6 +1,9 @@
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift (File.dirname(__FILE__) + "/support/matchers")
+require 'matchers'
+
 require 'simplecov'
 require 'simplecov-html'
+
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter
 ]

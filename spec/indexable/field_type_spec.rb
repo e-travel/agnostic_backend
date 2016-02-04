@@ -38,6 +38,16 @@ describe AgnosticBackend::Indexable::FieldType do
     end
   end
 
+  describe '#matches?' do
+    let(:ftype) { subject.new subject::INTEGER }
+    context 'when supplied type matches' do
+      it { expect(ftype.matches?(:integer)).to be_true }
+    end
+    context 'when supplied type does not match' do
+      it { expect(ftype.matches?(:something_else)).to be_false }
+    end
+  end
+
   describe '#get_option' do
     let(:type) { subject.new subject::INTEGER, an_option: 'option_value' }
     it 'should return the option\'s value' do
