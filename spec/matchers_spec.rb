@@ -9,12 +9,8 @@ describe 'Indexable matchers' do
   end
 
   describe 'be_indexable' do
-    context 'when the class includes Indexable' do
-      it { expect(IndexableObject).to be_indexable }
-    end
-    context 'when the class does not include Indexable' do
-      it { expect(Object).not_to be_indexable }
-    end
+    it { expect(IndexableObject).to be_indexable }
+    it { expect(Object).not_to be_indexable }
   end
 
   describe 'define_index_field' do

@@ -45,7 +45,6 @@ require 'agnostic_backend/cloudsearch/indexer'
 require 'agnostic_backend/cloudsearch/manager'
 require 'agnostic_backend/cloudsearch/remote_index_field'
 
-
 module AgnosticBackend
 
 end

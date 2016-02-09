@@ -249,3 +249,22 @@ end
 As a result, the schema will include a `concrete_task` field whose
 value will be the result of a merge between the schemas of all the
 classes specified in the `from` attribute.
+
+## RSpec Matchers
+
+`AgnosticBackends` also supplies `RSpec` matchers for verifying that a
+given class is `Indexable` and that it indexes the expected fields.
+
+In your `spec_helper.rb` use the following:
+
+```ruby
+require 'agnostic_backend/rspec/matchers'
+
+RSpec.configure do |config|
+  config.include AgnosticBackend::RSpec::Matchers
+end
+```
+
+This gives access to the matchers `be_indexable` and
+`define_index_field`. For usage examples, check the
+[corresponding test file](matchers_spec.rb).
