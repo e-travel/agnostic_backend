@@ -58,7 +58,7 @@ class Task < ActiveRecord::Base
     integer :id
     date :last_assigned_at, value: :assigned_at, label: 'Last Assigned At'
     string :type, value: proc { task_category.name }
-    struct :workflow
+    struct :workflow, from: Workflow
   end
 end
 ```
@@ -68,8 +68,11 @@ in the document to be indexed along with their types (`integer`,
 `date` and so on), values (symbols or `procs`s) and custom attributes
 (`label`).
 
-The `Task`'s schema (as defined by its index fields) can be retrieved
-using:
+The specification of types therein opens up the possibility of
+assembling the document's schema at runtime. This can be useful for
+configuring a remote backend without having to manually specify the
+schema. In our example, the `Task`'s schema (as defined by its index
+fields) can be retrieved using:
 
 ```ruby
 > Task.schema

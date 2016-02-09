@@ -5,13 +5,14 @@ functionality related to the following:
 
 - define what should be indexed as a document (attributes, nested
   fields, types etc.)
-- define when it should be indexed (when the object changes in some way)
+- define how it should be indexed (when the object changes in some
+  way)
 
 In our examples below, we are working with `ActiveRecord` models, but
 `AgnosticBackend` can be used with any object. Also, whenever we
 mention the word "document" below, we take this to be a Ruby Hash.
 
-## What should be indexed
+## Document contents
 
 Say we need to represent a workflow comprising a sequence of tasks
 within a case, using a `Workflow` AR model and a `Task` AR model
@@ -72,7 +73,7 @@ class Task < ActiveRecord::Base
     integer :id
     date :last_assigned_at, value: :assigned_at
     string :type, value: proc { task_category.name }
-    struct :workflow
+    struct :workflow, from: Workflow
   end
 end
 ```
@@ -104,11 +105,7 @@ document definitions in the same class for different owners. When the
 owner is not specified, it is taken to be the class in which the
 definition is written.
 
-## Polymorphic relationships (for ActiveRecord classes)
-
-TODO
-
-## How is a document generated
+## Document Generation
 
 Use the `Indexable#generate_document` method in order to obtain a hash
 with the document's contents. For example, given a `Task` instance:
@@ -124,7 +121,20 @@ nested hash retrieved from `Workflow`.
 
 ## When should a document be indexed
 
-TODO
+`Indexable` does not specify when and in what way a document should be
+indexed. Instead, this decision is up to the client. The objective is
+to achieve the maximum flexibility with regard to different
+requirements, some of which are summarized below:
+
+- when the class is an AR model, the client may incorporate a
+  `#put_in_index` call in an `after_save` or `after_commit` callback.
+- the client may wish to implement document indexing in an
+  asynchronous manner for performance reasons.
+- the client may wish to decide whether to index the document only if
+  certain conditions are met.
+
+For all these reasons, `Indexable` only provides the `put_in_index`
+instance method for the client to use as he/she sees fit.
 
 ## Field Types
 
@@ -143,7 +153,7 @@ TODO
 The interpretation of these types by backends are not in the scope of
 this document (check Index Guide for more details).
 
-## Document Schema
+## Document Schemas
 
 The specification of types in the definition of index fields implies
 that we can derive the document schema using the `Indexable#schema`
@@ -155,7 +165,7 @@ method. E.g. given a `Task` instance:
   "id" => :integer,
   "last_assigned_at" => :date,
   "type" => :string,
-  "case_entity" => {
+  "workflow" => {
     "id" => :integer,
     "created_at" => :date,
     "notes" => :text_array
@@ -179,7 +189,7 @@ class Task < ActiveRecord::Base
          is_column: true, label: 'Last Assigned At'
     string :type, value: proc { task_category.name }
            is_column: true, label: 'Task Type'
-    struct :workflow
+    struct :workflow, from: Workflow
   end
 end
 ```
@@ -194,3 +204,48 @@ We can get these options back (say `:is_column`) by passing a block to
 > task.schema {|field_type| field_type.get_option('is_column') }
 {:id=>nil, :last_assigned_at=>true, :type=>true, ...}
 ```
+
+Custom attributes can be very useful in a variety of situations; for
+example, they can be used in the context of web views in order to
+control the visual/behavioural aspects of the document's fields.
+
+## Polymorphic relationships (for ActiveRecord classes)
+
+`Indexable` also supports AR polymorphic relationships as nested
+fields. Suppose we have the following model:
+
+```ruby
+class Task < ActiveRecord::Base
+  include AgnosticBackend::Indexable
+  has_one :concrete_task, polymorphic: true
+
+  define_index_fields do
+    struct :concrete_task
+  end
+end
+```
+
+that has a polymorphic relationship with a concrete task, which can be
+one of various classes, say `ConcreteTaskA` and `ConcreteTaskB`. When
+requesting the `Task`'s schema using `Task.schema` the algorithm can
+not figure out which class needs to be queried about its schema when
+it encounters the `struct` field. As a result, the schema is
+incomplete.
+
+This can be overcome by specifying the possible classes that can
+constitute a concrete task using the `from` attribute as:
+
+```ruby
+class Task < ActiveRecord::Base
+  include AgnosticBackend::Indexable
+  has_one :concrete_task, polymorphic: true
+
+  define_index_fields do
+    struct :concrete_task, from: [ConcreteTaskA, ConcreteTaskB]
+  end
+end
+```
+
+As a result, the schema will include a `concrete_task` field whose
+value will be the result of a merge between the schemas of all the
+classes specified in the `from` attribute.
