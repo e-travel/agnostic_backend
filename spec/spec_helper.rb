@@ -4,7 +4,7 @@ require 'simplecov-html'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter
 ]
-SimpleCov.start 'rails'
+SimpleCov.start
 
 require 'agnostic_backend'
 require 'agnostic_backend/rspec/matchers'
