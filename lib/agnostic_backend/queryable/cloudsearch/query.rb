@@ -20,11 +20,6 @@ module AgnosticBackend
           end
         end
 
-        def set_cursor(value)
-          base.cursor(value)
-          base.build
-        end
-
         def to_s
           @executor.to_s
         end

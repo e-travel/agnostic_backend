@@ -34,6 +34,10 @@ module AgnosticBackend
       def offset_expression
         query.children.find { |e| e.is_a? Expressions::Offset }
       end
+
+      def scroll_cursor_expression
+        query.children.find { |e| e.is_a? Expressions::ScrollCursor }
+      end
     end
   end
 end

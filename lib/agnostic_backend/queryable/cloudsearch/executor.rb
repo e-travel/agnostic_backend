@@ -26,7 +26,7 @@ module AgnosticBackend
 
         def params
           {
-            cursor: cursor,
+            cursor: scroll_cursor,
             expr: expr,
             facet: facet,
             filter_query: filter_query,
@@ -51,16 +51,12 @@ module AgnosticBackend
         def filter_query
         end
 
-        def cursor_expression
-          query.children.find { |e| e.is_a? AgnosticBackend::Queryable::Cloudsearch::Expressions::Cursor }
-        end
-
         def query_expression
           where_expression ? where_expression.accept(visitor) : 'matchall'
         end
 
-        def cursor
-          cursor_expression.accept(visitor) if cursor_expression
+        def scroll_cursor
+          scroll_cursor_expression.accept(visitor) if scroll_cursor_expression
         end
 
         def start

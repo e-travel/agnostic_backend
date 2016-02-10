@@ -82,7 +82,7 @@ module AgnosticBackend
       end
 
       def build_scroll_cursor_expression
-        Expressions::Offset.new(value: @scroll_cursor, context: self)
+        Expressions::ScrollCursor.new(value: @scroll_cursor, context: self)
       end
 
       def build_order_qualifier(attribute, direction)

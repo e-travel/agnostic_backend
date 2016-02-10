@@ -75,4 +75,37 @@ describe AgnosticBackend::Queryable::ResultSet do
       expect { subject.send(:transform, result) }.to raise_error NotImplementedError
     end
   end
+
+  describe '#empty?' do
+    context 'when empty result' do
+      let(:filtered_results) { [] }
+      before do
+        expect(subject).to receive(:filtered_results).and_return filtered_results
+      end
+      it 'should return true' do
+        expect(subject.send(:empty?)).to be true
+      end
+    end
+
+    context 'when non empty result' do
+      let(:result_1) { {'a' => {'b' => 1}} }
+      let(:result_2) { {'a' => {'c' => 2}} }
+      let(:filtered_results) {
+        [
+            result_1,
+            result_2
+        ]
+      }
+
+      before do
+        expect(subject).to receive(:filtered_results).and_return filtered_results
+        allow(subject).to receive(:transform).with(result_1).and_return result_1
+        allow(subject).to receive(:transform).with(result_2).and_return result_2
+      end
+
+      it 'should return false' do
+        expect(subject.send(:empty?)).to be false
+      end
+    end
+  end
 end

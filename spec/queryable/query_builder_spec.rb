@@ -47,7 +47,27 @@ describe AgnosticBackend::Queryable::QueryBuilder do
   end
 
   describe '#order' do
+    let(:ascending_attribute) { 'a' }
+    let(:ascending_order_qualifier) { AgnosticBackend::Queryable::Operations::Ascending.new(attribute: ascending_attribute, context: subject) }
 
+    context 'when projections instance variable is not present' do
+      it 'should create projections instance variable and append arguments' do
+        expect(subject.instance_variable_get(:@order_qualifiers)).to be_nil
+        expect(subject.order(ascending_attribute, :asc)).to eq subject
+        expect(subject.instance_variable_get(:@order_qualifiers)).to eq [ascending_order_qualifier]
+      end
+    end
+
+    context 'when projections instance variable is present' do
+      let(:descending_attribute) { 'a' }
+      let(:descending_order_qualifier) { AgnosticBackend::Queryable::Operations::Descending.new(attribute: ascending_attribute, context: subject) }
+
+      it 'should append arguments to projections instance variable' do
+        subject.instance_variable_set(:@order_qualifiers, [ascending_order_qualifier])
+        expect(subject.order(descending_attribute, :desc)).to eq subject
+        expect(subject.instance_variable_get(:@order_qualifiers)).to eq [ascending_order_qualifier, descending_order_qualifier]
+      end
+    end
   end
 
   describe '#limit' do
@@ -65,6 +85,16 @@ describe AgnosticBackend::Queryable::QueryBuilder do
     it 'should assign argument to offset instance variable' do
       expect(subject.offset(offset)).to eq subject
       expect(subject.instance_variable_get(:@offset)).to eq offset
+    end
+  end
+
+
+  describe '#scroll_cursor' do
+    let(:scroll_cursor) { double('ScrollCursor') }
+
+    it 'should assign argument to scroll_cursor instance variable' do
+      expect(subject.scroll_cursor(scroll_cursor)).to eq subject
+      expect(subject.instance_variable_get(:@scroll_cursor)).to eq scroll_cursor
     end
   end
 
@@ -144,6 +174,19 @@ describe AgnosticBackend::Queryable::QueryBuilder do
         expect(query.children.first).to eq offset_expression
       end
     end
+
+    context 'when build_cursor instance variable is defined' do
+      let(:scroll_cursor) { double('ScrollCursor') }
+      let(:scroll_cursor_expression) { double('ScrollCursorExpression') }
+
+      it 'should build an scroll cursor expression and append to query\'s children' do
+        subject.instance_variable_set(:@scroll_cursor, scroll_cursor)
+        expect(subject).to receive(:build_scroll_cursor_expression).and_return scroll_cursor_expression
+
+        expect(subject.build).to eq query
+        expect(query.children.first).to eq scroll_cursor_expression
+      end
+    end
   end
 
   describe '#create_query' do
@@ -197,6 +240,16 @@ describe AgnosticBackend::Queryable::QueryBuilder do
       subject.instance_variable_set(:@offset, offset)
       expect(AgnosticBackend::Queryable::Expressions::Offset).to receive(:new).with(value: offset, context: subject)
       subject.send(:build_offset_expression)
+    end
+  end
+
+  describe '#build_scroll_cursor_expression' do
+    let(:scroll_cursor) { double('ScrollCursor') }
+
+    it 'should create an Scroll Cursor Expression with scroll_cursor' do
+      subject.instance_variable_set(:@scroll_cursor, scroll_cursor)
+      expect(AgnosticBackend::Queryable::Expressions::ScrollCursor).to receive(:new).with(value: scroll_cursor, context: subject)
+      subject.send(:build_scroll_cursor_expression)
     end
   end
 

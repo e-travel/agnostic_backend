@@ -17,6 +17,11 @@ module AgnosticBackend
       def valid?
         self.accept(AgnosticBackend::Queryable::Validator.new)
       end
+
+     def set_scroll_cursor(value)
+        context.scroll_cursor(value)
+        context.build
+      end
     end
   end
 end
