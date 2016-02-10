@@ -298,23 +298,41 @@ describe AgnosticBackend::Indexable do
         end
       end
 
-      describe '#put_in_index' do
-        let(:index) { AgnosticBackend::Index.new(subject) }
+      describe '#put_to_index' do
         let(:indexer) { AgnosticBackend::Indexer.new(index) }
-        before { allow(IndexableObject).to receive(:create_index).and_return(index) }
-        it 'should index itself' do
+        let(:index) { AgnosticBackend::Index.new(klass) }
+
+        before do
           expect(index).to receive(:indexer).and_return(indexer)
+          expect(klass).to receive(:create_index).and_return(index)
           expect(indexer).to receive(:put).with(subject).and_return('Result')
-          expect(subject.put_in_index).to eq 'Result'
+        end
+
+        context 'when the index_name is specified' do
+          let(:klass) { double("AnotherIndexableObject") }
+          it 'should index itself in the requested index' do
+            expect(AgnosticBackend::Indexable).
+              to receive(:indexable_class).
+                  with("index_name").
+                  and_return klass
+            expect(subject.put_to_index('index_name')).to eq 'Result'
+          end
+        end
+
+        context 'when the index_name is nil' do
+          let(:klass) { subject.class}
+          it 'should index itself in the default index' do
+            expect(subject.put_to_index).to eq 'Result'
+          end
         end
       end
 
-      describe '#trigger_index_notification_on_save' do
+      describe '#trigger_index_notification' do
         before { allow(IndexableObject).to receive(:after_commit) }
         context 'when the target has been defined' do
           before { IndexableObject.define_index_notifier { self } }
           it 'should notify the notifier' do
-            expect(subject).to receive(:enqueue_for_indexing).with('indexable_objects')
+            expect(subject).to receive(:index_object).with('indexable_objects')
             subject.send(:trigger_index_notification)
           end
         end
@@ -325,7 +343,7 @@ describe AgnosticBackend::Indexable do
             allow(subject).to receive(:targets).and_return(targets)
           end
           it 'should notify the notifier' do
-            targets.each {|target| expect(target).to receive(:enqueue_for_indexing).with('indexable_objects')}
+            targets.each {|target| expect(target).to receive(:index_object).with('indexable_objects')}
             subject.send(:trigger_index_notification)
           end
         end
@@ -338,8 +356,11 @@ describe AgnosticBackend::Indexable do
         end
       end
 
-      describe '#enqueue_for_indexing' do
-        it { expect{ subject.enqueue_for_indexing :not_there }.to raise_error /NotImplementedError/}
+      describe '#index_object' do
+        it "should default to calling put_to_index" do
+          expect(subject).to receive(:put_to_index).with(:not_there)
+          subject.index_object(:not_there)
+        end
       end
     end
   end

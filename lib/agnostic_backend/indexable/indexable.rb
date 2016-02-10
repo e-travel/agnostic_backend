@@ -16,7 +16,6 @@ module AgnosticBackend
       base.send :extend, ClassMethods
     end
 
-
     module ClassMethods
 
       def create_index
@@ -97,14 +96,18 @@ module AgnosticBackend
         manager.extract_contents_from self, index_name
       end
 
-      def put_in_index
-        index = self.class.create_index
+      def put_to_index(index_name=nil)
+        indexable_class = index_name.nil? ?
+                            self.class :
+                            AgnosticBackend::Indexable.indexable_class(index_name)
+
+        index = indexable_class.create_index
         indexer = index.indexer
         indexer.put(self)
       end
 
-      def enqueue_for_indexing(index_name)
-        raise NotImplementedError
+      def index_object(index_name)
+        put_to_index(index_name)
       end
 
       private
@@ -114,7 +117,7 @@ module AgnosticBackend
         _index_root_notifiers.each do |index_name, block|
           obj = instance_eval &block
           obj = [obj] unless obj.is_a? Enumerable
-          obj.each { |o| o.enqueue_for_indexing(index_name) if o.present? }
+          obj.each { |o| o.index_object(index_name) if o.present? }
         end
       end
     end
