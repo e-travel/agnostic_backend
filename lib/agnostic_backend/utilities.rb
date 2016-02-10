@@ -132,6 +132,76 @@ module AgnosticBackend
         end
       end
 
+      def convert_to(type, value)
+        case type
+        when :integer
+          if value.is_a?(Fixnum)
+            value
+          elsif is_integer?(value)
+            value.to_i
+          else
+            value
+          end
+        when :date
+          if value.is_a?(Time)
+            value
+          elsif is_date?(value)
+            value.to_time.utc
+          else
+            value
+          end
+        when :double
+          if value.is_a?(Float)
+            value
+          elsif is_float?(value)
+            value.to_f
+          else
+            value
+          end
+        when :boolean
+          if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+            value
+          elsif is_boolean?(value)
+            convert_to_boolean(value)
+          else
+            value
+          end
+        when :string,:string_array,:text,:text_array
+          if value.is_a?(String)
+            value
+          else
+            value.to_s
+          end
+        else
+          value
+        end
+      end
+
+      def is_integer?(value)
+        (/^[-+]?\d+$/ =~ value.to_s).present?
+      end
+
+      def is_float?(value)
+        (/^[-+]?(\d*[.])?\d+$/ =~ value.to_s).present?
+      end
+
+      def is_boolean?(value)
+        value == 'true' || value == 'false'
+      end
+
+      def is_date?(value)
+        value.to_time.present? rescue false
+      end
+
+      def convert_to_boolean(value)
+        case value
+        when 'true'
+          true
+        when 'false'
+          false
+        end
+      end
+
     end
   end
 end

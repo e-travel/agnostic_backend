@@ -5,7 +5,14 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
     it { should be_a_kind_of(AgnosticBackend::Queryable::TreeNode) }
   end
 
-  let(:index) { double('Index') }
+  let(:schema) do
+    {
+        'an_integer' => double('FieldType', type: :integer),
+        'a_string' => double('FieldType', type: :string),
+        'a_date' => double('FieldType', type: :date)
+    }
+  end
+  let(:index) { double('Index', schema: schema) }
   let(:context) { double('Context', index: index) }
   let(:expression) { AgnosticBackend::Queryable::Expressions::Expression.new(operator, base) }
 

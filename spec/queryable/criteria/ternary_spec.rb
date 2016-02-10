@@ -2,10 +2,19 @@ require 'spec_helper'
 
 describe AgnosticBackend::Queryable::Criteria::Ternary do
 
+  let(:schema) do
+    {
+        'an_integer' => double('FieldType', type: :integer),
+        'a_string' => double('FieldType', type: :string),
+        'a_date' => double('FieldType', type: :date)
+    }
+  end
+  let(:index) { double('Index', schema: schema) }
+  let(:context) { double('Context', index: index) }
+
   let(:attribute) { 'foo' }
   let(:left_value) { 5 }
   let(:right_value) { 10 }
-  let(:context) { double('context') }
   let(:criterion) { AgnosticBackend::Queryable::Criteria::Ternary.new(attribute: attribute, left_value: left_value, right_value: right_value, context: context) }
 
   context 'inheritance' do

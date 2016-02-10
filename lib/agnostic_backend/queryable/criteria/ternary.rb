@@ -13,8 +13,8 @@ module AgnosticBackend
       class Between < Ternary
         def initialize(attribute:, left_value:, right_value:, context: nil)
           attribute = attribute_component(attribute: attribute, context: context)
-          left_value = value_component(value: left_value, context: context)
-          right_value = value_component(value: right_value, context: context)
+          left_value = value_component(value: left_value, context: context, type: attribute.type)
+          right_value = value_component(value: right_value, context: context, type: attribute.type)
           super(attribute: attribute, left_value: left_value, right_value: right_value, context: context)
         end
       end

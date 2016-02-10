@@ -134,7 +134,7 @@ describe AgnosticBackend::Queryable::TreeNode do
 
   describe '#value_component' do
     it 'should return a Value instance' do
-      value = tree_node.send(:value_component, value: value, context: context)
+      value = tree_node.send(:value_component, value: value, context: context, type: :string)
       expect(value).to be_an_instance_of AgnosticBackend::Queryable::Value
       expect(value.context).to eq context
     end

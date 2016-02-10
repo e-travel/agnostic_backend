@@ -2,9 +2,18 @@ require 'spec_helper'
 
 describe AgnosticBackend::Queryable::Criteria::Binary do
 
+  let(:schema) do
+    {
+        'an_integer' => double('FieldType', type: :integer),
+        'a_string' => double('FieldType', type: :string),
+        'a_date' => double('FieldType', type: :date)
+    }
+  end
+  let(:index) { double('Index', schema: schema) }
+  let(:context) { double('Context', index: index) }
+
   let(:attribute) { 'foo' }
   let(:value) { 'bar' }
-  let(:context) { double('Context') }
   let(:criterion) { AgnosticBackend::Queryable::Criteria::Binary.new(attribute: attribute, value: value, context: context) }
 
   context 'inheritance' do

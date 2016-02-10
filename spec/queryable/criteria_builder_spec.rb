@@ -1,7 +1,16 @@
 require 'spec_helper'
 
 describe AgnosticBackend::Queryable::CriteriaBuilder do
-  let(:context) { double('Context')}
+  let(:schema) do
+    {
+        'an_integer' => double('FieldType', type: :integer),
+        'a_string' => double('FieldType', type: :string),
+        'a_date' => double('FieldType', type: :date)
+    }
+  end
+  let(:index) { double('Index', schema: schema) }
+  let(:context) { double('Context', index: index) }
+
   describe 'initialize' do
     it 'should create context instance variable' do
       builder = AgnosticBackend::Queryable::CriteriaBuilder.new(context)
@@ -47,85 +56,85 @@ describe AgnosticBackend::Queryable::CriteriaBuilder do
 
   describe '#eq' do
     it 'should initialize an Equal criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::Equal).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.eq('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Equal)
+      expect(AgnosticBackend::Queryable::Criteria::Equal).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original
+      expect(subject.eq('an_integer', 1)).to be_a(AgnosticBackend::Queryable::Criteria::Equal)
     end
   end
 
   describe '#neq' do
     it 'should initialize a NotEqual criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::NotEqual).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.neq('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::NotEqual)
+      expect(AgnosticBackend::Queryable::Criteria::NotEqual).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original
+      expect(subject.neq('an_integer', 1)).to be_a(AgnosticBackend::Queryable::Criteria::NotEqual)
     end
   end
 
   describe '#gt' do
     it 'should initialize a Greater criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::Greater).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.gt('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Greater)
+      expect(AgnosticBackend::Queryable::Criteria::Greater).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original
+      expect(subject.gt('an_integer', 1)).to be_a(AgnosticBackend::Queryable::Criteria::Greater)
     end
   end
 
   describe '#lt' do
     it 'should initialize a Less criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::Less).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.lt('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Less)
+      expect(AgnosticBackend::Queryable::Criteria::Less).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original
+      expect(subject.lt('an_integer', 1)).to be_a(AgnosticBackend::Queryable::Criteria::Less)
     end
   end
 
   describe '#ge' do
     it 'should initialize a GreaterEqual criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::GreaterEqual).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.ge('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::GreaterEqual)
+      expect(AgnosticBackend::Queryable::Criteria::GreaterEqual).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original
+      expect(subject.ge('an_integer', 1)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterEqual)
     end
   end
 
   describe '#le' do
     it 'should initialize a LessEqual criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::LessEqual).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.le('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::LessEqual)
+      expect(AgnosticBackend::Queryable::Criteria::LessEqual).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original
+      expect(subject.le('an_integer', 1)).to be_a(AgnosticBackend::Queryable::Criteria::LessEqual)
     end
   end
 
   describe '#gt_and_lt' do
     it 'should initialize a GreaterAndLess criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::GreaterAndLess).to receive(:new).with(attribute: 'foo', left_value: 5, right_value: 10, context: context).and_call_original
-      expect(subject.gt_and_lt('foo', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterAndLess)
+      expect(AgnosticBackend::Queryable::Criteria::GreaterAndLess).to receive(:new).with(attribute: 'an_integer', left_value: 5, right_value: 10, context: context).and_call_original
+      expect(subject.gt_and_lt('an_integer', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterAndLess)
     end
   end
 
   describe '#gt_and_le' do
     it 'should initialize a GreaterAndLessEqual criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::GreaterAndLessEqual).to receive(:new).with(attribute: 'foo', left_value: 5, right_value: 10, context: context).and_call_original
-      expect(subject.gt_and_le('foo', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterAndLessEqual)
+      expect(AgnosticBackend::Queryable::Criteria::GreaterAndLessEqual).to receive(:new).with(attribute: 'an_integer', left_value: 5, right_value: 10, context: context).and_call_original
+      expect(subject.gt_and_le('an_integer', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterAndLessEqual)
     end
   end
 
   describe '#ge_and_lt' do
     it 'should initialize a GreaterEqualAndLess criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLess).to receive(:new).with(attribute: 'foo', left_value: 5, right_value: 10, context: context).and_call_original
-      expect(subject.ge_and_lt('foo', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLess)
+      expect(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLess).to receive(:new).with(attribute: 'an_integer', left_value: 5, right_value: 10, context: context).and_call_original
+      expect(subject.ge_and_lt('an_integer', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLess)
     end
   end
 
   describe '#ge_and_le' do
     it 'should initialize a GreaterEqualAndLessEqual criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLessEqual).to receive(:new).with(attribute: 'foo', left_value: 5, right_value: 10, context: context).and_call_original
-      expect(subject.ge_and_le('foo', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLessEqual)
+      expect(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLessEqual).to receive(:new).with(attribute: 'an_integer', left_value: 5, right_value: 10, context: context).and_call_original
+      expect(subject.ge_and_le('an_integer', 5, 10)).to be_a(AgnosticBackend::Queryable::Criteria::GreaterEqualAndLessEqual)
     end
   end
 
   describe '#contains' do
     it 'should initialize a Contain criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::Contains).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.contains('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Contains)
+      expect(AgnosticBackend::Queryable::Criteria::Contains).to receive(:new).with(attribute: 'a_string', value: 'bar', context: context).and_call_original
+      expect(subject.contains('a_string', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Contains)
     end
   end
 
   describe '#starts' do
     it 'should initialize a Starts criterion' do
-      expect(AgnosticBackend::Queryable::Criteria::Starts).to receive(:new).with(attribute: 'foo', value: 'bar', context: context).and_call_original
-      expect(subject.starts('foo', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Starts)
+      expect(AgnosticBackend::Queryable::Criteria::Starts).to receive(:new).with(attribute: 'a_string', value: 'bar', context: context).and_call_original
+      expect(subject.starts('a_string', 'bar')).to be_a(AgnosticBackend::Queryable::Criteria::Starts)
     end
   end
 

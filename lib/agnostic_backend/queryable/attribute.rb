@@ -11,6 +11,10 @@ module AgnosticBackend
       def ==(o)
         super && o.name == name
       end
+
+      def type
+        context.index.schema[name].try(:type)
+      end
     end
   end
 end

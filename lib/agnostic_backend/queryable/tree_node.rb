@@ -1,6 +1,7 @@
 module AgnosticBackend
   module Queryable
     class TreeNode
+      include AgnosticBackend::Utilities
       # include Enumerable
 
       attr_reader :children
@@ -39,8 +40,8 @@ module AgnosticBackend
         Attribute.new(attribute, parent: self, context: context)
       end
 
-      def value_component(value:, context: nil)
-        Value.new(value, parent: self, context: context)
+      def value_component(value:, context: nil, type:)
+        Value.new(convert_to(type, value), parent: self, context: context)
       end
     end
   end

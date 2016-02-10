@@ -115,13 +115,7 @@ module AgnosticBackend
             subject.value
           when :boolean
             "'#{subject.value}'"
-          when :string
-            "'#{subject.value}'"
-          when :string_array
-            "'#{subject.value}'"
-          when :text
-            "'#{subject.value}'"
-          when :text_array
+          when :string,:string_array,:text,:text_array
             "'#{subject.value}'"
           else
             subject.value

@@ -14,7 +14,7 @@ module AgnosticBackend
 
         def initialize(attribute:, value:, context: nil)
           attribute = attribute_component(attribute: attribute, context: context)
-          value = value_component(value: value, context: context)
+          value = value_component(value: value, context: context, type: attribute.type)
           super(attribute: attribute, value: value, context: context)
         end
       end

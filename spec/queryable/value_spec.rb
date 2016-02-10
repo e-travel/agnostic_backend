@@ -72,20 +72,18 @@ describe AgnosticBackend::Queryable::Value do
       it 'should return attribute type if associated attribute is defined in schema' do
         index = double('Index', schema: {'foo' => double('FieldType', type: :integer)})
         context = double('Context', index: index)
-        attribute = double('Attribute', name: 'foo')
+        attribute = double('Attribute', name: 'foo', type: :integer)
 
         expect(subject).to receive(:associated_attribute).twice.and_return attribute
-        expect(parent).to receive(:context).and_return context
         expect(subject.type).to eq :integer
       end
 
       it 'should return attribute if associated attribute is defined in schema as association' do
         index = double('Index', schema: {'foo' => {'bar' => {'baz' => double('FieldType', type: :integer)}}})
         context = double('Context', index: index)
-        attribute = double('Attribute', name: 'foo.bar.baz')
+        attribute = double('Attribute', name: 'foo.bar.baz', type: :integer)
 
         expect(subject).to receive(:associated_attribute).twice.and_return attribute
-        expect(parent).to receive(:context).and_return context
         expect(subject.type).to eq :integer
       end
     end

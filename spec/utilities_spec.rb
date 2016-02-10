@@ -184,4 +184,311 @@ describe AgnosticBackend::Utilities do
       expect{subject.with_exponential_backoff(error, &block)}.to raise_error(error)
     end
   end
+
+  describe '#is_integer?' do
+    context 'given an integer' do
+      let(:value) { 1 }
+      it 'should return true' do
+        expect(subject.is_integer?(value)).to be true
+      end
+    end
+
+    context 'given a string' do
+      context 'when string has an integer format' do
+        let(:value) { '1' }
+        it 'should return true' do
+          expect(subject.is_integer?(value)).to be true
+        end
+      end
+
+      context 'when string does not have an integer format' do
+        let(:value) { '1.1' }
+        it 'should return false' do
+          expect(subject.is_integer?(value)).to be false
+        end
+      end
+    end
+  end
+
+  describe '#is_float?' do
+    context 'given an integer' do
+      let(:value) { 1 }
+      it 'should return true' do
+        expect(subject.is_float?(value)).to be true
+      end
+    end
+
+    context 'given a float' do
+      let(:value) { 1.1 }
+      it 'should return true' do
+        expect(subject.is_float?(value)).to be true
+      end
+    end
+
+    context 'given a string' do
+      context 'when string has a float format' do
+        let(:value) { '1.1' }
+        it 'should return true' do
+          expect(subject.is_float?(value)).to be true
+        end
+      end
+
+      context 'when string does not have an integer format' do
+        let(:value) { '1.1.2' }
+        it 'should return false' do
+          expect(subject.is_float?(value)).to be false
+        end
+      end
+    end
+  end
+
+  describe '#is_boolean?' do
+    context 'given a string' do
+      context 'when string has a boolean value' do
+        let(:value) { 'true' }
+        it 'should return true' do
+          expect(subject.is_boolean?(value)).to be true
+        end
+
+        let(:value) { 'false' }
+        it 'should return true' do
+          expect(subject.is_boolean?(value)).to be true
+        end
+      end
+
+      context 'when string does not have an boolean value' do
+        let(:value) { 'not' }
+        it 'should return false' do
+          expect(subject.is_boolean?(value)).to be false
+        end
+      end
+    end
+  end
+
+  describe '#is_date?' do
+    context 'given a string' do
+      context 'when string has a date format' do
+        let(:value) { '10-02-2016 16:13' }
+        it 'should return true' do
+          expect(subject.is_date?(value)).to be true
+        end
+      end
+
+      context 'when string has a date format' do
+        let(:value) { '2016-02-10T16:15:03+02:00' }
+        it 'should return true' do
+          expect(subject.is_date?(value)).to be true
+        end
+      end
+
+      context 'when string does not have a date value' do
+        let(:value) { 'date' }
+        it 'should return false' do
+          expect(subject.is_date?(value)).to be false
+        end
+      end
+    end
+  end
+
+  describe '#is_date?' do
+    context 'given a string' do
+      context 'when string has a date format' do
+        let(:value) { '10-02-2016 16:13' }
+        it 'should return true' do
+          expect(subject.is_date?(value)).to be true
+        end
+      end
+
+      context 'when string has a date format' do
+        let(:value) { '2016-02-10T16:15:03+02:00' }
+        it 'should return true' do
+          expect(subject.is_date?(value)).to be true
+        end
+      end
+
+      context 'when string does not have a date value' do
+        let(:value) { 'date' }
+        it 'should return false' do
+          expect(subject.is_date?(value)).to be false
+        end
+      end
+    end
+  end
+
+  describe '#convert_to_boolean' do
+    context 'when \'false\' is given' do
+      let(:value) { 'false' }
+      it 'should return false' do
+        expect(subject.convert_to_boolean(value)).to be false
+      end
+    end
+
+    context 'when \'true\' is given' do
+      let(:value) { 'true' }
+      it 'should return true' do
+        expect(subject.convert_to_boolean(value)).to be true
+      end
+    end
+  end
+
+  describe '#convert_to' do
+    context 'when type is integer' do
+      let(:type) { :integer }
+      context 'when value is an integer' do
+        let(:value) { 1 }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Fixnum
+          expect(result).to eq 1
+        end
+      end
+
+      context 'when value can be converted to integer' do
+        let(:value) { '1' }
+        it 'should return the value converted to integer' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Fixnum
+          expect(result).to eq 1
+        end
+      end
+
+      context 'when value cannot be converted to integer' do
+        let(:value) { '1.1' }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).not_to be_a Fixnum
+          expect(result).to eq value
+        end
+      end
+    end
+
+    context 'when type is date' do
+      let(:type) { :date }
+      context 'when value is an date' do
+        let(:value) { Time.now }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Time
+          expect(result).to eq value.utc
+        end
+      end
+
+      context 'when value can be converted to date' do
+        let(:value) { '2016-02-10T16:15:03+02:00' }
+        it 'should return the value converted to date' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Time
+          expect(result).to eq value.to_time.utc
+        end
+      end
+
+      context 'when value cannot be converted to date' do
+        let(:value) { 'date' }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).not_to be_a Time
+          expect(result).to eq value
+        end
+      end
+    end
+
+    context 'when type is double' do
+      let(:type) { :double }
+      context 'when value is an float' do
+        let(:value) { 1.1 }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Float
+          expect(result).to eq 1.1
+        end
+      end
+
+      context 'when value is an integer' do
+        let(:value) { 1 }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Float
+          expect(result).to eq 1.0
+        end
+      end
+
+      context 'when value can be converted to float' do
+        let(:value) { '1.1' }
+        it 'should return the value converted to float' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a Float
+          expect(result).to eq 1.1
+        end
+      end
+
+      context 'when value cannot be converted to float' do
+        let(:value) { '1a' }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).not_to be_a Fixnum
+          expect(result).to eq value
+        end
+      end
+    end
+
+    context 'when type is boolean' do
+      let(:type) { :boolean }
+      context 'when value is an boolean' do
+        let(:value) { false }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a FalseClass
+          expect(result).to eq value
+        end
+      end
+
+      context 'when value can be converted to boolean' do
+        let(:value) { 'false' }
+        it 'should return the value converted to boolean' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a FalseClass
+        end
+      end
+
+      context 'when value cannot be converted to boolean' do
+        let(:value) { 'Not' }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).not_to be_a FalseClass
+          expect(result).to eq value
+        end
+      end
+    end
+
+    context 'when type is string' do
+      let(:type) { :string }
+      context 'when value is an string' do
+        let(:value) { 'string' }
+        it 'should return the value' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a String
+          expect(result).to eq value
+        end
+      end
+
+      context 'when value can be converted to string' do
+        let(:value) { 10.0 }
+        it 'should return the value converted to string' do
+          result = subject.convert_to(type, value)
+          expect(result).to be_a String
+          expect(result).to eq value.to_s
+        end
+      end
+    end
+
+    context 'when type is nil' do
+      let(:type) { nil }
+      let(:value) { 10.0 }
+      it 'should return the value' do
+        result = subject.convert_to(type, value)
+        expect(result).to be_a value.class
+        expect(result).to eq value
+      end
+    end
+  end
 end

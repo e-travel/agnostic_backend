@@ -20,7 +20,7 @@ module AgnosticBackend
       end
 
       def type
-        value_for_key(parent.context.index.schema, associated_attribute.name).try(:type) if associated_attribute
+        associated_attribute.type if associated_attribute
       end
     end
   end
