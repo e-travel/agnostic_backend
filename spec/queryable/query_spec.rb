@@ -36,4 +36,14 @@ describe AgnosticBackend::Queryable::Query do
       subject.valid?
     end
   end
+
+  describe "#set_scroll_cursor" do
+    let(:value) { double("Value") }
+    it 'should scroll the cursor and build its context' do
+      expect(subject.context).to receive(:scroll_cursor).with(value)
+      expect(subject.context).to receive(:build)
+
+      subject.set_scroll_cursor(value)
+    end
+  end
 end
