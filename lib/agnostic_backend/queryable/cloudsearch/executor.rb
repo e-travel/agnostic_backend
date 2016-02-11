@@ -20,7 +20,7 @@ module AgnosticBackend
           result += " sort=#{sort}" if sort
           result += " size=#{size}" if size
           result += " offset=#{start}" if start
-          result += " cursor=#{cursor}" if cursor
+          result += " cursor=#{scroll_cursor}" if scroll_cursor
           result
         end
 
@@ -45,7 +45,7 @@ module AgnosticBackend
         private
 
         def client
-          query.base.index.cloudsearch_domain_client
+          query.context.index.cloudsearch_domain_client
         end
 
         def filter_query

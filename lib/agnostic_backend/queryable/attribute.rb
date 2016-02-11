@@ -1,6 +1,8 @@
 module AgnosticBackend
   module Queryable
     class Attribute < TreeNode
+      include AgnosticBackend::Utilities
+
       attr_reader :name, :parent
 
       def initialize(name, parent: parent, context: context)
@@ -13,7 +15,7 @@ module AgnosticBackend
       end
 
       def type
-        context.index.schema[name].try(:type)
+        value_for_key(context.index.schema, name).try(:type)
       end
     end
   end

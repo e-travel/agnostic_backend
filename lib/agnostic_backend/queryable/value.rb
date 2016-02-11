@@ -1,7 +1,6 @@
 module AgnosticBackend
   module Queryable
     class Value < TreeNode
-      include AgnosticBackend::Utilities
 
       attr_accessor :value
       attr_reader :parent
@@ -20,7 +19,7 @@ module AgnosticBackend
       end
 
       def type
-        associated_attribute.type if associated_attribute
+        associated_attribute.type if associated_attribute.present?
       end
     end
   end

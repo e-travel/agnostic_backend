@@ -148,7 +148,7 @@ module AgnosticBackend
             @valid = false
           end
         when :date
-          unless subject.value.is_a?(DateTime)
+          unless subject.value.is_a?(Time)
             subject.context.query.errors[subject.class.name] << value_error(subject)
             @valid = false
           end
