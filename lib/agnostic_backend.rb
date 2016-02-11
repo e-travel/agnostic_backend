@@ -11,6 +11,8 @@ require 'agnostic_backend/indexable/content_manager'
 
 require 'agnostic_backend/index'
 require 'agnostic_backend/indexer'
+require 'agnostic_backend/manager'
+
 
 require 'agnostic_backend/queryable/tree_node'
 require 'agnostic_backend/queryable/attribute'
@@ -42,7 +44,6 @@ require 'agnostic_backend/queryable/cloudsearch/visitor'
 require 'agnostic_backend/cloudsearch/index'
 require 'agnostic_backend/cloudsearch/index_field'
 require 'agnostic_backend/cloudsearch/indexer'
-require 'agnostic_backend/cloudsearch/manager'
 require 'agnostic_backend/cloudsearch/remote_index_field'
 
 module AgnosticBackend
