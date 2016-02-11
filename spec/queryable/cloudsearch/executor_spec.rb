@@ -17,7 +17,8 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
 
   let(:index) { AgnosticBackend::Cloudsearch::Index.new(QueryableObject) }
   let(:builder) { AgnosticBackend::Queryable::Cloudsearch::QueryBuilder.new(index) }
-  let(:query) { double("Query", base: builder) }
+  let(:context) { double("Context", index: index) }
+  let(:query) { double("Query", base: builder, context: context) }
   let(:visitor) { double('Visitor') }
 
   subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, visitor)}
