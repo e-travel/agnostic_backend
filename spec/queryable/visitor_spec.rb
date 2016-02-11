@@ -13,9 +13,42 @@ describe AgnosticBackend::Queryable::Visitor do
     end
   end
 
-  describe '#class_to_method_name' do
-    it 'should prefix visit split the string in Queryable:: and join with _' do
-      expect(subject.send(:class_to_method_name, context.class)).to eq 'visit_bar_baz_foo'
+  describe "Not Implemented methods" do
+    it 'should raise an error' do
+      not_implemented_method_names.each do |method_name|
+        expect{ subject.send(method_name, :params) }.to raise_error { NotImplementedError }
+      end
+    end
+
+    def not_implemented_method_names
+      [
+          :visit_operations_equal,
+          :visit_operations_not_equal,
+          :visit_operations_greater,
+          :visit_operations_less,
+          :visit_operations_greater_equal,
+          :visit_operations_less_equal,
+          :visit_operations_greater_and_less,
+          :visit_operations_greater_equal_and_less,
+          :visit_operations_greater_and_less_equal,
+          :visit_operations_greater_equal_and_less_equal,
+          :visit_operations_not,
+          :visit_operations_and,
+          :visit_operations_or,
+          :visit_operations_ascending,
+          :visit_operations_descending,
+          :visit_operations_contains,
+          :visit_operations_starts,
+          :visit_query,
+          :visit_expressions_where,
+          :visit_expressions_select,
+          :visit_expressions_order,
+          :visit_expressions_limit,
+          :visit_expressions_offset,
+          :visit_expressions_scroll_cursor,
+          :visit_attribute,
+          :visit_value
+      ]
     end
   end
 end

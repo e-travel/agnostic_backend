@@ -58,7 +58,7 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
 
   context 'Order Expression' do
     let(:ascending_qualifier) { AgnosticBackend::Queryable::Operations::Ascending.new(attribute: 'a_string', context: context) }
-    let(:descending_qualifier) { AgnosticBackend::Queryable::Operations::Ascending.new(attribute: 'an_integer', context: context) }
+    let(:descending_qualifier) { AgnosticBackend::Queryable::Operations::Descending.new(attribute: 'an_integer', context: context) }
     let(:order_expression) { AgnosticBackend::Queryable::Expressions::Order.new(attributes: [ascending_qualifier, descending_qualifier], context: context) }
 
     it 'should inherit from Expression' do

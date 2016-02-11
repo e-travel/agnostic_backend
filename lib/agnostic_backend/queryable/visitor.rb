@@ -36,7 +36,7 @@ module AgnosticBackend
         raise NotImplementedError
       end
 
-      def visit_operations_lessequal(subject)
+      def visit_operations_less_equal(subject)
         raise NotImplementedError
       end
 

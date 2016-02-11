@@ -20,7 +20,7 @@ module AgnosticBackend
         visit(subject.value)
       end
 
-      def visit_criteria_notequal(subject)
+      def visit_criteria_not_equal(subject)
         visit(subject.attribute)
         visit(subject.value)
       end
@@ -35,48 +35,48 @@ module AgnosticBackend
         visit(subject.value)
       end
 
-      def visit_criteria_greaterequal(subject)
+      def visit_criteria_greater_equal(subject)
         visit(subject.attribute)
         visit(subject.value)
       end
 
-      def visit_criteria_lessequal(subject)
+      def visit_criteria_less_equal(subject)
         visit(subject.attribute)
         visit(subject.value)
       end
 
-      def visit_criteria_greaterandless(subject)
+      def visit_criteria_contains(subject)
+        visit(subject.attribute)
+        visit(subject.value)
+      end
+
+      def visit_criteria_starts(subject)
+        visit(subject.attribute)
+        visit(subject.value)
+      end
+
+      def visit_criteria_greater_and_less(subject)
         visit(subject.attribute)
         visit(subject.left_value)
         visit(subject.right_value)
       end
 
-      def visit_criteria_greaterequalandless(subject)
+      def visit_criteria_greater_equal_and_less(subject)
         visit(subject.attribute)
         visit(subject.left_value)
         visit(subject.right_value)
       end
 
-      def visit_criteria_greaterandlessequal(subject)
+      def visit_criteria_greater_and_less_equal(subject)
         visit(subject.attribute)
         visit(subject.left_value)
         visit(subject.right_value)
       end
 
-      def visit_criteria_greaterequalandlessequal(subject)
+      def visit_criteria_greater_equal_and_less_equal(subject)
         visit(subject.attribute)
         visit(subject.left_value)
         visit(subject.right_value)
-      end
-
-      def visit_criteria_contain(subject)
-        visit(subject.attribute)
-        visit(subject.value)
-      end
-
-      def visit_criteria_start(subject)
-        visit(subject.attribute)
-        visit(subject.value)
       end
 
       def visit_operations_not(subject)
@@ -100,7 +100,7 @@ module AgnosticBackend
       end
 
       def visit_expressions_where(subject)
-        subject.restrictions.each { |c| visit(c) }
+        visit(subject.criterion)
       end
 
       def visit_expressions_select(subject)
@@ -119,8 +119,8 @@ module AgnosticBackend
         visit(subject.offset)
       end
 
-      def visit_cloudsearch_expressions_cursor(subject)
-        visit(subject.cursor)
+      def visit_expressions_scroll_cursor(subject)
+        visit(subject.scroll_cursor)
       end
 
       def visit_attribute(subject)
@@ -142,22 +142,7 @@ module AgnosticBackend
             subject.context.query.errors[subject.class.name] << value_error(subject)
             @valid = false
           end
-        when :string
-          unless subject.value.is_a?(String)
-            subject.context.query.errors[subject.class.name] << value_error(subject)
-            @valid = false
-          end
-        when :string_array
-          unless subject.value.is_a?(String)
-            subject.context.query.errors[subject.class.name] << value_error(subject)
-            @valid = false
-          end
-        when :text
-          unless subject.value.is_a?(String)
-            subject.context.query.errors[subject.class.name] << value_error(subject)
-            @valid = false
-          end
-        when :text_array
+        when :string,:string_array,:text,:text_array
           unless subject.value.is_a?(String)
             subject.context.query.errors[subject.class.name] << value_error(subject)
             @valid = false
