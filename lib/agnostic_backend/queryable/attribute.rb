@@ -5,7 +5,7 @@ module AgnosticBackend
 
       attr_reader :name, :parent
 
-      def initialize(name, parent: parent, context: context)
+      def initialize(name, parent:, context:)
         super([], context)
         @name, @parent = name, parent
       end

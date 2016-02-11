@@ -39,14 +39,6 @@ describe AgnosticBackend::Queryable::ResultSet do
       subject.each
     end
 
-    let(:nilified_schema) {
-      {
-          'a' => {
-              'b' => nil,
-              'c' => nil
-          }
-      }
-    }
     it 'should yield transformed result' do
       expect(subject).to receive(:filtered_results).and_return filtered_results
       expect(subject).to receive(:transform).with(result_1).and_return result_1

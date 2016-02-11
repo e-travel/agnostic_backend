@@ -65,7 +65,7 @@ module AgnosticBackend
         @indexable_class.where(id: ids).find_in_batches(start: 1, batch_size: batch_size) { |group| yield group }
       end
 
-      def to_document(indexable: indexable)
+      def to_document(indexable:)
         document = indexable.generate_document
         document = @indexer.send(:flatten, document)
         document = @indexer.send(:reject_blank_values_from, document)
@@ -75,7 +75,7 @@ module AgnosticBackend
         document
       end
 
-      def split_in_document_batches(batch: batch)
+      def split_in_document_batches(batch:)
         document_batch = @indexer.send(:convert_to_json, batch)
 
         document_size = document_batch.bytesize
@@ -101,7 +101,7 @@ module AgnosticBackend
         document_batch
       end
 
-      def publish_document(document: document)
+      def publish_document(document:)
         @indexer.send(:publish, document)
       end
     end
