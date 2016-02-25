@@ -3,10 +3,11 @@
 Broadly speaking, the `Indexable` module provides classes with
 functionality related to the following:
 
-- define what should be indexed as a document (attributes, nested
-  fields, types etc.)
-- define how it should be indexed (when the object changes in some
-  way)
+- define what should be indexed (attributes names/values, nested
+  fields, field types etc.)
+- define who should be notified when an object (or its owner) needs to
+  be indexed (when the object changes in some way)
+- when should the above notifications occur
 
 In our examples below, we are working with `ActiveRecord` models, but
 `AgnosticBackend` can be used with any object. Also, whenever we
@@ -126,15 +127,39 @@ indexed. Instead, this decision is up to the client. The objective is
 to achieve the maximum flexibility with regard to different
 requirements, some of which are summarized below:
 
-- when the class is an AR model, the client may incorporate a
-  `#put_in_index` call in an `after_save` or `after_commit` callback.
+- when the class is an AR model, the client would like to use AR
+  callbacks (such as `after_save` or `after_commit`) to index the
+  model.
 - the client may wish to implement document indexing in an
   asynchronous manner for performance reasons.
 - the client may wish to decide whether to index the document only if
   certain conditions are met.
 
-For all these reasons, `Indexable` only provides the `put_in_index`
-instance method for the client to use as he/she sees fit.
+The entry point to indexing a document is
+`Indexable::InstanceMethods#trigger_index_notification`, which is
+responsible for notifying whoever has been registered in one or many
+`define_index_notifiers` blocks within the class. The message
+`:index_object` is sent to all objects that need to be notified. By
+default, `Indexable::InstanceMethods#index_object` will delegate to
+`Indexable::InstanceMethods#put_in_index` which will index the
+document synchronously.
+
+`Indexable::InstanceMethods#index_object` can be overriden in order to
+implement custom behaviour (such as asynchronous indexing through
+queueing). Any call to `put_in_index` will index
+
+- `Indexable::InstanceMethods#trigger_index_notification` must be used
+  in order to notify all registered objects
+- `Indexable::InstanceMethods#index_object`, by default, will index
+  the document synchronously (by calling
+  `Indexable::InstanceMethods#put_in_index`). `index_object` needs to
+  be overriden in order to implement custom behaviour (such as
+  asynchronous indexing)
+- `Indexable::InstanceMethods#put_in_index` is the method that
+  implements the actual indexing. Any custom implementation of
+  `index_object` must ultimately call `put_in_index` for indexing to
+  occur.
+
 
 ## Field Types
 
@@ -150,17 +175,14 @@ instance method for the client to use as he/she sees fit.
 - `:boolean`
 - `:struct`: used to specify a nested structure
 
-The interpretation of these types by backends are not in the scope of
-this document (check Index Guide for more details).
-
 ## Document Schemas
 
 The specification of types in the definition of index fields implies
 that we can derive the document schema using the `Indexable#schema`
-method. E.g. given a `Task` instance:
+method. E.g. given the `Task` class:
 
 ```ruby
-> task.schema
+> Task.schema
 {
   "id" => :integer,
   "last_assigned_at" => :date,
@@ -195,7 +217,7 @@ end
 ```
 
 In this example, we have specified two custom attributes for fields
-`last_assigned_at` and `is_column`, for use in UI elements.
+`label` and `is_column`, for use in UI elements.
 
 We can get these options back (say `:is_column`) by passing a block to
 `Indexable#schema` (that yields a `FieldType` instance) as follows:
