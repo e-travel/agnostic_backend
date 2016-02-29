@@ -11,8 +11,6 @@ require 'agnostic_backend/indexable/content_manager'
 
 require 'agnostic_backend/index'
 require 'agnostic_backend/indexer'
-require 'agnostic_backend/manager'
-
 
 require 'agnostic_backend/queryable/tree_node'
 require 'agnostic_backend/queryable/attribute'
