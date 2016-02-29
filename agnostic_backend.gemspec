@@ -6,20 +6,16 @@ require 'agnostic_backend/version'
 Gem::Specification.new do |spec|
   spec.name          = "agnostic_backend"
   spec.version       = AgnosticBackend::VERSION
-  spec.authors       = ["Iasonas Gavriilidis"]
-  spec.email         = ["i.gavriilidis@pamediakopes.gr"]
+  spec.authors       = ["Iasonas Gavriilidis",
+                        "Laertis Pappas",
+                        "Kyriakos Kentzoglanakis"]
+  spec.email         = ["i.gavriilidis@pamediakopes.gr",
+                        "l.pappas@pamediakopes.gr",
+                        "k.kentzoglanakis@pamediakopes.gr"]
 
-  spec.summary       = %q{A gem to index/query ruby objects to remote backends}
-  #spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{A gem to index/query ruby objects to/from remote backends}
+  spec.homepage      = "https://github.com/e-travel/agnostic_backend"
   spec.license       = "MIT"
-
-  # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
-  # delete this section to allow pushing this gem to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
-  end
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
