@@ -1,3 +1,5 @@
+[![Travis Build Status](https://travis-ci.org/e-travel/agnostic_backend.svg?branch=master)](https://travis-ci.org/e-travel/agnostic_backend)
+
 # Agnostic Backend
 
 `agnostic_backend` is a gem that provides indexing and searching
