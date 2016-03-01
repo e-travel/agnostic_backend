@@ -1,1 +1,5 @@
 coverage
+pkg
+*.gem
+tags
+gems.tags
