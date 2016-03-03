@@ -2,6 +2,7 @@
 Version](https://badge.fury.io/rb/agnostic_backend.svg)](https://badge.fury.io/rb/agnostic_backend)
 [![Travis Build Status](https://travis-ci.org/e-travel/agnostic_backend.svg?branch=master)](https://travis-ci.org/e-travel/agnostic_backend)
 [![Code Climate](https://codeclimate.com/github/e-travel/agnostic_backend/badges/gpa.svg)](https://codeclimate.com/github/e-travel/agnostic_backend)
+[![Dependency Status](https://gemnasium.com/e-travel/agnostic_backend.svg)](https://gemnasium.com/e-travel/agnostic_backend)
 
 # Agnostic Backend
 
