@@ -5,25 +5,31 @@ Version](https://badge.fury.io/rb/agnostic_backend.svg)](https://badge.fury.io/r
 
 # Agnostic Backend
 
-`agnostic_backend` is a gem that provides indexing and searching
-capabililities to Ruby objects by supplying two modules: `Indexable`
-and `Queryable`. `Indexable` provides indexing functionality by
-specifying a way to define which attributes of an object should be
-included in a document to be indexed to a remote backend
+`agnostic_backend` is a gem that adds indexing and searching
+capabilities to Ruby objects for various backends.
+
+It includes two modules: `Indexable` and `Queryable`.
+`Indexable` provides indexing functionality by
+specifying a way to define which object attributes should be
+transformed in order to be eventually indexed to a remote backend
 store. `Queryable` provides search and retrieval functionality by
 specifying a generic query language that seamlessly maps to specific
 backend languages.
 
 In addition to these two modules, `agnostic_backend` supplies
-additional classes (`Indexer` and `Index`) to support the
-configuration and functionality of remote backends (such as
-elasticsearch, AWS Cloudsearch etc.).
+additional classes (`Indexer` and `Index`) to support
+configuration and transformation functionality for remote backends (such as
+elasticsearch, AWS Cloudsearch etc).
 
 Although the motivation and use case for the gem relates to
 `ActiveRecord` models, no assumption is made as to the classes to
 which `Indexable` and `Queryable` can be included. The objective is to
 maximize the flexibility of clients with respect to the use cases they
 need to address.
+
+## Supported backends
+
+* [AWS Cloudsearch](https://aws.amazon.com/cloudsearch/)
 
 ## Installation
 
