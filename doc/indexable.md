@@ -289,4 +289,4 @@ end
 
 This gives access to the matchers `be_indexable` and
 `define_index_field`. For usage examples, check the
-[corresponding test file](matchers_spec.rb).
+[corresponding test file](https://github.com/e-travel/agnostic_backend/blob/master/spec/matchers_spec.rb).
