@@ -58,19 +58,15 @@ for more info on dependencies.
 
 For the purposes of this document, we will focus on `ActiveRecord`
 examples. Let's assume we have two AR models, `Task` and `Workflow`,
-connected using an one-to-many relationship (i.e. a `Workflow` has
-many `Task`s) as follows:
+connected using an one-to-many relationship (i.e. a Workflow has
+many Tasks) as follows:
 
 ```ruby
 class Task < ActiveRecord::Base
-  include AgnosticBackend::Indexable
-
   belongs_to :workflow, class_name: 'Workflow'
 end
 
 class Workflow < ActiveRecord::Base
-  include AgnosticBackend::Indexable
-
   has_many :tasks, class_name: 'Task'
 end
 ```
@@ -224,7 +220,7 @@ AgnosticBackend::Indexable::Config.configure_index(
 ```
 
 More information about the use of `Indexable` can be found in
-[this document](src/master/doc/indexable.md).
+[this document](doc/indexable.md).
 
 ### Queryable
 
@@ -260,7 +256,7 @@ results = query.execute
 ```
 
 For more information about `Queryable` check out
-[this document](src/master/doc/queryable.md).
+[this document](doc/queryable.md).
 
 
 ### Backends
