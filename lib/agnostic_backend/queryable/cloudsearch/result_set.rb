@@ -8,7 +8,7 @@ module AgnosticBackend
           raw_results.hits.found
         end
 
-        def cursor
+        def scroll_cursor
           raw_results.hits.cursor
         end
 
