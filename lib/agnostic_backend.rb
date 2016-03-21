@@ -44,6 +44,8 @@ require 'agnostic_backend/cloudsearch/index_field'
 require 'agnostic_backend/cloudsearch/indexer'
 require 'agnostic_backend/cloudsearch/remote_index_field'
 
+Dir[File.dirname(__FILE__) + '/agnostic_backend/elastic_search/*.rb'].each {|file| require file }
+
 module AgnosticBackend
 
 end
