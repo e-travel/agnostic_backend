@@ -1,6 +1,7 @@
-module AgnosticBackend
-  module ElasticSearch
+  module AgnosticBackend
+  module Elasticsearch
     class Indexer < AgnosticBackend::Indexer
+      include AgnosticBackend::Utilities
       
       def initialize(index)
         super

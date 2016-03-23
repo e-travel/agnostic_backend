@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AgnosticBackend::ElasticSearch::Index do
+describe AgnosticBackend::Elasticsearch::Index do
   before do
     class IndexableClass
       include AgnosticBackend::Indexable
@@ -17,17 +17,17 @@ describe AgnosticBackend::ElasticSearch::Index do
 
     AgnosticBackend::Indexable::Config.configure_index(
       IndexableClass,
-      AgnosticBackend::ElasticSearch::Index)
+      AgnosticBackend::Elasticsearch::Index)
   end
 
   subject { IndexableClass.create_index }
 
   it { should be_a AgnosticBackend::Index }
-  it { should be_a AgnosticBackend::ElasticSearch::Index }
+  it { should be_a AgnosticBackend::Elasticsearch::Index }
 
   describe "#indexer" do
     it { expect(subject.indexer).to be_a AgnosticBackend::Indexer }
-    it { expect(subject.indexer).to be_a AgnosticBackend::ElasticSearch::Indexer }
+    it { expect(subject.indexer).to be_a AgnosticBackend::Elasticsearch::Indexer }
   end
 
   describe "#schema" do
@@ -39,7 +39,7 @@ describe AgnosticBackend::ElasticSearch::Index do
   end
 
   describe "#elastic_search_client" do
-    it { expect(subject.elastic_search_client).to be_a AgnosticBackend::ElasticSearch::Client }
+    it { expect(subject.elastic_search_client).to be_a AgnosticBackend::Elasticsearch::Client }
   end
   
   describe "#query_builder" do

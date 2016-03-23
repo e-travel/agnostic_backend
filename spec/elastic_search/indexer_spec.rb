@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'webmock/rspec'
 
-describe AgnosticBackend::ElasticSearch::Indexer do
+describe AgnosticBackend::Elasticsearch::Indexer do
   let(:index_class) { class DummyClass;end }
-  let(:index) { AgnosticBackend::ElasticSearch::Index.new(index_class) }
-  subject { AgnosticBackend::ElasticSearch::Indexer.new(index) }
+  let(:index) { AgnosticBackend::Elasticsearch::Index.new(index_class) }
+  subject { AgnosticBackend::Elasticsearch::Indexer.new(index) }
 
   it { expect(subject).to be_a(AgnosticBackend::Indexer) }
   it { expect(subject.index).to eq(index) }

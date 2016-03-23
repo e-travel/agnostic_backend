@@ -1,40 +1,46 @@
 require 'faraday'
 
 module AgnosticBackend
-  module ElasticSearch
+  module Elasticsearch
     class Client
-      class NotFoundError < StandardError; end
-      class BadRequestError < StandardError; end
-      class ServerError < StandardError; end
+      attr_reader :endpoint, 
+                  :index_name,
+                  :type
 
-      CONNECTION = ::Faraday::Connection.new url: 'http://localhost:9200'
+      def initialize(endpoint:, index_name:, type:)
+        @endpoint = endpoint
+        @index_name = index_name
+        @type = type
+        @connection = connection(endpoint)
+      end
 
-      # Relational DB  ⇒ Databases ⇒ Tables ⇒ Rows      ⇒ Columns
-      # Elasticsearch  ⇒ Indices   ⇒ Types  ⇒ Documents ⇒ Fields
-      def initialize(index="index", type="type")
-        @index_type_path = "/#{index}/#{type}"
+      def connection(endpoint)
+        ::Faraday::Connection.new(url: endpoint)
       end
 
       def get(id)
         perform_request("get", "#{index_type_path}/#{id}", nil, nil)
       end
-  
-      # 
+
       def upload_document(document, id = nil)
         method = id.present? ? "put" : "post"
         response = perform_request(method, "#{@index_type_path}/#{id}", nil, document)
         MultiJson.load(response.body)["created"]
       end
 
-      private
-      attr_reader :index_type_path
+      def define_index_field(endpoint:, index_name:, type:, definition:)
+        response = perform_request("put", "#{index_name}/_mapping/#{type}", nil, {"properties" => definition})
+        MultiJson.load(response.body)["acknowledged"]
+      end
 
       def perform_request(method, path, params, body)
-        CONNECTION.run_request(method.downcase.to_sym, 
+        @connection.run_request(method.downcase.to_sym, 
                                path, 
                                ( body ? MultiJson.dump(body): nil ), 
                                {'Content-Type' => 'application/json'})
       end
+
+     
     end
   end
 end

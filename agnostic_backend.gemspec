@@ -25,13 +25,13 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "activesupport", "~> 3"
   spec.add_runtime_dependency "aws-sdk", "~> 2"
+  spec.add_runtime_dependency "faraday"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10"
   spec.add_development_dependency "rspec", "~> 2"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
-  spec.add_development_dependency "faraday"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-html"
 end

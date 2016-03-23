@@ -20,7 +20,7 @@ backend languages.
 In addition to these two modules, `agnostic_backend` supplies
 additional classes (`Indexer` and `Index`) to support
 configuration and transformation functionality for remote backends (such as
-elasticsearch, AWS Cloudsearch etc).
+Elasticsearch, AWS Cloudsearch etc).
 
 Although the motivation and use case for the gem relates to
 `ActiveRecord` models, no assumption is made as to the classes to
