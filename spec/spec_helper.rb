@@ -1,9 +1,7 @@
 require 'simplecov'
 require 'simplecov-html'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  SimpleCov::Formatter::HTMLFormatter
-]
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new SimpleCov::Formatter::HTMLFormatter
 SimpleCov.start
 
 require 'agnostic_backend'
