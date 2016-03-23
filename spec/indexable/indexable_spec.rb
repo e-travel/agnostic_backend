@@ -207,7 +207,7 @@ describe AgnosticBackend::Indexable do
               managers = subject.send(:_index_content_managers)
               expect(managers.keys).to eq ['indexable_objects', 'tests']
               expect(managers.values.all?{|v| v.is_a? AgnosticBackend::Indexable::ContentManager}).
-                  to be_true
+                  to be true
             end
           end
         end
@@ -251,7 +251,7 @@ describe AgnosticBackend::Indexable do
               IndexableObject.define_index_notifier(target: 'test', &field_block)
               notifiers = subject.send(:_index_root_notifiers)
               expect(notifiers.keys).to eq ['indexable_objects', 'tests']
-              expect(notifiers.values.all?{|v| v.is_a? Proc}).to be_true
+              expect(notifiers.values.all?{|v| v.is_a? Proc}).to be true
             end
           end
         end

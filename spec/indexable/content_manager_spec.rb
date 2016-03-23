@@ -32,16 +32,16 @@ describe AgnosticBackend::Indexable::ContentManager do
   describe '#respond_to?' do
     context 'when sym is a Field type' do
       it { expect(AgnosticBackend::Indexable::FieldType.all.all?{|type| subject.respond_to? type })
-           .to be_true }
+           .to be true }
     end
 
     context 'when sym is an instance method' do
       it { expect(subject.class.instance_methods(false).all?{|method| subject.respond_to? method}).
-           to be_true }
+           to be true }
     end
 
     context 'when sym is none of the above' do
-      it { expect(subject.respond_to? :hey_there).to be_false }
+      it { expect(subject.respond_to? :hey_there).to be false }
     end
   end
 

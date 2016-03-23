@@ -18,10 +18,10 @@ describe AgnosticBackend::Indexable::FieldType do
 
   describe '.exists?' do
     context 'when type exists' do
-      it { expect(subject.all.all?{|type| subject.exists? type}).to be_true}
+      it { expect(subject.all.all?{|type| subject.exists? type}).to be true}
     end
     context 'when type does not exist' do
-      it { expect(subject.exists? :hello).to be_false }
+      it { expect(subject.exists? :hello).to be false }
     end
   end
 
@@ -41,10 +41,10 @@ describe AgnosticBackend::Indexable::FieldType do
   describe '#matches?' do
     let(:ftype) { subject.new subject::INTEGER }
     context 'when supplied type matches' do
-      it { expect(ftype.matches?(:integer)).to be_true }
+      it { expect(ftype.matches?(:integer)).to be true }
     end
     context 'when supplied type does not match' do
-      it { expect(ftype.matches?(:something_else)).to be_false }
+      it { expect(ftype.matches?(:something_else)).to be false }
     end
   end
 
@@ -58,11 +58,11 @@ describe AgnosticBackend::Indexable::FieldType do
   describe '#has_option' do
     let(:type) { subject.new subject::INTEGER, an_option: 'option_value' }
     it 'should return true if option contained' do
-      expect(type.has_option(:an_option)).to be_true
+      expect(type.has_option(:an_option)).to be true
     end
 
     it 'should return false if option not contained' do
-      expect(type.has_option(:another_option)).to be_false
+      expect(type.has_option(:another_option)).to be false
     end
   end
 end

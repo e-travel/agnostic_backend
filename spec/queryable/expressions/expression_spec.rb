@@ -52,7 +52,7 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
     end
 
     it 'should map projections to attributes' do
-      expect(select_expression.projections.all?{|p| p.is_a? AgnosticBackend::Queryable::Attribute}).to be_true
+      expect(select_expression.projections.all?{|p| p.is_a? AgnosticBackend::Queryable::Attribute}).to be true
     end
   end
 

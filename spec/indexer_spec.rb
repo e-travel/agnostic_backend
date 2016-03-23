@@ -26,14 +26,14 @@ describe AgnosticBackend::Indexer do
     context 'when indexing is successful' do
       it 'should return true' do
         expect(subject).to receive(:publish).with(document)
-        expect(subject.put(indexable)).to be_true
+        expect(subject.put(indexable)).to be true
       end
     end
 
     context 'when indexing is not successful' do
       it 'should return false' do
         expect(subject).to receive(:publish).with(document).and_raise('boom')
-        expect(subject.put(indexable)).to be_false
+        expect(subject.put(indexable)).to be false
       end
     end
 

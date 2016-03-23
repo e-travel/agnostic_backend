@@ -147,7 +147,7 @@ describe AgnosticBackend::Utilities do
     let(:base) { 0.5 }
     it 'should generate a sequence of numbers smaller than max' do
       sequence = (0..4).map{|i| subject.exponential_backoff_sleep_time(max, base, i) }
-      expect(sequence.all?{ |time| time <= max }).to be_true
+      expect(sequence.all?{ |time| time <= max }).to be true
     end
 
     it 'should generate a sequence of numbers in roughly ascending order' do

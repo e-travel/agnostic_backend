@@ -217,7 +217,7 @@ describe AgnosticBackend::Queryable::Validator do
       it 'should change validator state to invalid' do
         expect(subject).to receive(:visit_attribute).and_call_original
         subject.visit(visitor_subject)
-        expect(subject.instance_variable_get('@valid')).to be_false
+        expect(subject.instance_variable_get('@valid')).to be false
       end
     end
 
@@ -235,7 +235,7 @@ describe AgnosticBackend::Queryable::Validator do
       it 'should keep validator state to valid' do
         expect(subject).to receive(:visit_attribute).and_call_original
         subject.visit(visitor_subject)
-        expect(subject.instance_variable_get('@valid')).to be_true
+        expect(subject.instance_variable_get('@valid')).to be true
       end
     end
   end
@@ -263,7 +263,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -285,7 +285,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -307,7 +307,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -329,7 +329,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -351,7 +351,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -373,7 +373,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -395,7 +395,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
 
@@ -417,7 +417,7 @@ describe AgnosticBackend::Queryable::Validator do
         it 'should change validator state to invalid' do
           expect(subject).to receive(:visit_value).and_call_original
           subject.visit(visitor_subject)
-          expect(subject.instance_variable_get('@valid')).to be_false
+          expect(subject.instance_variable_get('@valid')).to be false
         end
       end
     end
@@ -440,7 +440,7 @@ describe AgnosticBackend::Queryable::Validator do
       it 'should change validator state to invalid' do
         expect(subject).to receive(:visit_value).and_call_original
         subject.visit(visitor_subject)
-        expect(subject.instance_variable_get('@valid')).to be_true
+        expect(subject.instance_variable_get('@valid')).to be true
       end
     end
 
@@ -462,7 +462,7 @@ describe AgnosticBackend::Queryable::Validator do
       it 'should change validator state to invalid' do
         expect(subject).to receive(:visit_value).and_call_original
         subject.visit(visitor_subject)
-        expect(subject.instance_variable_get('@valid')).to be_true
+        expect(subject.instance_variable_get('@valid')).to be true
       end
     end
   end

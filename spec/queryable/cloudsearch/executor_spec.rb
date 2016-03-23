@@ -79,7 +79,7 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
 
   describe '#partial' do
     it 'should return false' do
-      expect(subject.send(:partial)).to be_false
+      expect(subject.send(:partial)).to be false
     end
   end
 

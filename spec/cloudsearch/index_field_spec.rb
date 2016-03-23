@@ -53,7 +53,7 @@ describe AgnosticBackend::Cloudsearch::IndexField do
                                               literal_options: OpenStruct.new))
       end
       before { allow(subject).to receive(:options).and_return({}) }
-      it { expect(subject.equal_to_remote_field?(remote_field)).to be_false }
+      it { expect(subject.equal_to_remote_field?(remote_field)).to be false }
     end
 
     context 'when types are different' do
@@ -63,7 +63,7 @@ describe AgnosticBackend::Cloudsearch::IndexField do
                                               literal_options: OpenStruct.new))
       end
       before { allow(subject).to receive(:options).and_return({}) }
-      it { expect(subject.equal_to_remote_field?(remote_field)).to be_false }
+      it { expect(subject.equal_to_remote_field?(remote_field)).to be false }
     end
 
     context 'when at least one option is different' do
@@ -72,7 +72,7 @@ describe AgnosticBackend::Cloudsearch::IndexField do
                                               index_field_type: subject.send(:cloudsearch_type),
                                               literal_options: OpenStruct.new(a: 1)))
       end
-      it { expect(subject.equal_to_remote_field?(remote_field)).to be_false }
+      it { expect(subject.equal_to_remote_field?(remote_field)).to be false }
     end
 
     context 'when everything is the same' do
@@ -83,7 +83,7 @@ describe AgnosticBackend::Cloudsearch::IndexField do
                                               literal_options: OpenStruct.new(**options)))
       end
       before { allow(subject).to receive(:options).and_return(options) }
-      it { expect(subject.equal_to_remote_field?(remote_field)).to be_true }
+      it { expect(subject.equal_to_remote_field?(remote_field)).to be true }
     end
 
   end

@@ -60,7 +60,7 @@ describe AgnosticBackend::Cloudsearch::Index do
       expect(IndexableObject).to receive(:schema).and_call_original
       schema = subject.schema
       expect(schema.reject{|_,ftype| ftype.nested?}.
-              all?{|_,ftype| ftype.is_a? AgnosticBackend::Indexable::FieldType}).to be_true
+              all?{|_,ftype| ftype.is_a? AgnosticBackend::Indexable::FieldType}).to be true
     end
   end
 
@@ -172,7 +172,7 @@ describe AgnosticBackend::Cloudsearch::Index do
     let(:schema) { {"alpha" => :integer, "beta" => :string} }
     it 'should create an IndexField for each entry of the flat schema' do
       fields = subject.send(:index_fields, schema)
-      expect(fields.all?{|field| field.is_a? AgnosticBackend::Cloudsearch::IndexField}).to be_true
+      expect(fields.all?{|field| field.is_a? AgnosticBackend::Cloudsearch::IndexField}).to be true
       expect(fields.first.name).to eq 'alpha'
       expect(fields.first.type).to eq :integer
       expect(fields.last.name).to eq 'beta'
