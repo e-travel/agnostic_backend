@@ -3,3 +3,4 @@ pkg
 *.gem
 tags
 gems.tags
+Gemfile.lock
