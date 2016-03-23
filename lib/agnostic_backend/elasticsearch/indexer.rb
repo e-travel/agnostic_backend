@@ -1,23 +1,20 @@
-  module AgnosticBackend
+module AgnosticBackend
   module Elasticsearch
     class Indexer < AgnosticBackend::Indexer
       include AgnosticBackend::Utilities
-      
+
       def initialize(index)
         super
       end
 
       def publish(document)
-        client.upload_document(document, id = document[:id].to_s)
-      end
-
-      def get(id)
-        client.get(id)
+        client.upload_document(document)
       end
 
       private
+
       def client
-        index.elastic_search_client
+        index.elasticsearch_client
       end
 
       def prepare(document)

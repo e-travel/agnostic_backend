@@ -30,17 +30,16 @@ module AgnosticBackend
       end
 
       def configure
-        define_fields_in_domain(indexer.flatten(schema))
+        define_mappings(indexer.flatten(schema))
       end
 
-      def define_fields_in_domain(flat_schema)
+      private
+      def define_mappings(flat_schema)
         local_fields = index_fields(flat_schema)
 
         local_fields.each do |index_field|
-          
-          index_field.define_in_domain(index: self)
+          elasticsearch_client.define_mapping(definition: index_field.definition)
         end
-        nil
       end
 
       def index_fields(flat_schema)

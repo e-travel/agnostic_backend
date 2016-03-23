@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'webmock/rspec'
 
 describe AgnosticBackend::Elasticsearch::Index do
   before do
@@ -11,13 +12,15 @@ describe AgnosticBackend::Elasticsearch::Index do
         boolean :a_boolean
         text :a_text
         text_array :a_text_array
+        date :a_date
+        boolean :a_boolean
       end
       define_index_notifier { self }
     end
 
     AgnosticBackend::Indexable::Config.configure_index(
       IndexableClass,
-      AgnosticBackend::Elasticsearch::Index)
+      AgnosticBackend::Elasticsearch::Index, endpoint: 'http://localhost:9200', index_name: 'index', type: 'type')
   end
 
   subject { IndexableClass.create_index }
@@ -39,10 +42,25 @@ describe AgnosticBackend::Elasticsearch::Index do
   end
 
   describe "#elastic_search_client" do
-    it { expect(subject.elastic_search_client).to be_a AgnosticBackend::Elasticsearch::Client }
+    it { expect(subject.elasticsearch_client).to be_a AgnosticBackend::Elasticsearch::Client }
   end
   
   describe "#query_builder" do
     pending
   end
+  
+  describe "#configure" do
+   it 'should configure mappings to ES' do
+     index_response = { "acknowledged" => true }
+
+     subject.schema.each do |fname, ftype|
+       es_index_type = AgnosticBackend::Elasticsearch::IndexField.new(fname, ftype)
+       stub_request(:put, "http://localhost:9200/index/_mapping/type").
+         with(:body => "{\"properties\":{\"#{es_index_type.name}\":{\"type\":\"#{es_index_type.elasticsearch_type}\",\"index\":\"not_analyzed\"}}}").to_return(status: 201, body: JSON.generate(index_response))
+     end
+
+     subject.configure
+    end
+  end
+
 end
