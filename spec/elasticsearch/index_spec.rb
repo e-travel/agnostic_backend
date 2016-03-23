@@ -48,7 +48,14 @@ describe AgnosticBackend::Elasticsearch::Index do
   describe "#query_builder" do
     pending
   end
-  
+ 
+  describe "#create_index" do
+    it 'should create an index' do
+      stub_request(:put, "http://localhost:9200/index").with(body: nil).to_return(status: 201, body: JSON.generate({a: "response"}))
+      subject.create_index
+    end
+  end
+
   describe "#configure" do
    it 'should configure mappings to ES' do
      index_response = { "acknowledged" => true }

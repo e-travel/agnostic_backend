@@ -26,7 +26,11 @@ module AgnosticBackend
       end
 
       def elasticsearch_client
-        @elasticsearch_client ||= AgnosticBackend::Elasticsearch::Client.new(endpoint: endpoint, index_name: index_name, type: type)
+        @elasticsearch_client ||= AgnosticBackend::Elasticsearch::Client.new(endpoint: endpoint)
+      end
+
+      def create_index
+        elasticsearch_client.put(path: index_name)
       end
 
       def configure
@@ -35,10 +39,10 @@ module AgnosticBackend
 
       private
       def define_mappings(flat_schema)
-        local_fields = index_fields(flat_schema)
-
-        local_fields.each do |index_field|
-          elasticsearch_client.define_mapping(definition: index_field.definition)
+        index_fields(flat_schema).each do |index_field|
+          elasticsearch_client.put(
+            path: index_mapping_type_path, 
+            body: { "properties" => index_field.definition })
         end
       end
 
@@ -46,6 +50,10 @@ module AgnosticBackend
         flat_schema.map do |field_name, field_type|
           AgnosticBackend::Elasticsearch::IndexField.new(field_name, field_type)
         end
+      end
+
+      def index_mapping_type_path
+        "#{index_name}/_mapping/#{type}"
       end
     end
   end

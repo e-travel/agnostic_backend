@@ -8,7 +8,7 @@ module AgnosticBackend
       end
 
       def publish(document)
-        client.upload_document(document)
+        client.put(path: index_type_path(document[:id]), body: document)
       end
 
       private
@@ -23,6 +23,12 @@ module AgnosticBackend
 
       def transform(document)
         document
+      end
+
+      def index_type_path(doc_id = nil)
+        return "/#{index.index_name}/#{index.type}/#{doc_id}" if doc_id.present?
+
+        "/#{index.index_name}/#{index.type}"
       end
     end
   end

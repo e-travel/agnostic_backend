@@ -52,7 +52,8 @@ describe AgnosticBackend::Elasticsearch::Indexer do
       end
 
       it 'should index a document to elastic search' do
-        expect(subject.publish(document)).to be true
+        response = subject.publish(document)
+        expect(response.status).to eq(201)
       end
     end
     context "when document does not have an id" do
@@ -69,13 +70,14 @@ describe AgnosticBackend::Elasticsearch::Indexer do
                           "_type"=>"type", "_id"=>"1", 
                           "_version"=>1, 
                           "created"=>true}
-        stub_request(:post, 'http://localhost:9200/index/type')
+        stub_request(:put, 'http://localhost:9200/index/type')
           .with(body: hash_including(title: 'title', text: 'text', date_created: 'date'))
           .to_return(status: 201, body: JSON.generate(index_response))
       end
 
       it 'should index a document to elastic search' do
-        expect(subject.publish(document)).to be true
+        response = subject.publish(document)
+        expect(response.status).to eq 201
       end
     end
   end
