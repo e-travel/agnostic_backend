@@ -33,10 +33,10 @@ describe AgnosticBackend::Elasticsearch::Indexer do
     context "when document has an id" do
       let(:document) do
         {
-          id: 1,
-          title: "title",
-          text:  "text",
-          date_created:  "10/2/1988"
+          "id" => 1,
+          "title" => "title",
+          "text" =>  "text",
+          "date_created" =>  "10/2/1988"
         }
       end
 
@@ -59,9 +59,9 @@ describe AgnosticBackend::Elasticsearch::Indexer do
     context "when document does not have an id" do
       let(:document) do
         {
-          title: "title",
-          text:  "text",
-          date_created:  "date"
+          "title" => "title",
+          "text" =>  "text",
+          "date_created" =>  "date"
         }
       end
 
@@ -70,8 +70,8 @@ describe AgnosticBackend::Elasticsearch::Indexer do
                           "_type"=>"type", "_id"=>"1", 
                           "_version"=>1, 
                           "created"=>true}
-        stub_request(:put, 'http://localhost:9200/index/type')
-          .with(body: hash_including(title: 'title', text: 'text', date_created: 'date'))
+        stub_request(:post, 'http://localhost:9200/index/type')
+          .with(body: hash_including("title" => 'title', "text" => 'text', "date_created" => 'date'))
           .to_return(status: 201, body: JSON.generate(index_response))
       end
 

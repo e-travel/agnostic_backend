@@ -8,7 +8,11 @@ module AgnosticBackend
       end
 
       def publish(document)
-        client.put(path: index_type_path(document[:id]), body: document)
+        if document["id"].present?
+          client.put(path: index_type_path(document["id"]), body: document)
+        else
+          client.post(path: index_type_path, body: document)
+        end
       end
 
       private
