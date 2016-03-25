@@ -21,7 +21,8 @@ module AgnosticBackend
       end
 
       def analyzed?
-        type.has_option(:analyzed) ? !!type.get_option(:analyzed) : false
+        (type.type == AgnosticBackend::Indexable::FieldType::TEXT) ||
+        (type.type == AgnosticBackend::Indexable::FieldType::TEXT_ARRAY)
       end
 
       def elasticsearch_type

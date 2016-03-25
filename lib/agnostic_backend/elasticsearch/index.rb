@@ -38,6 +38,7 @@ module AgnosticBackend
       end
 
       private
+      
       def define_mappings(flat_schema)
         index_fields(flat_schema).each do |index_field|
           elasticsearch_client.put(
