@@ -26,6 +26,11 @@ module AgnosticBackend
       end
 
       def transform(document)
+        return {} if document.empty?
+
+        document = flatten document
+        document = reject_blank_values_from document
+        document = date_format document
         document
       end
 
