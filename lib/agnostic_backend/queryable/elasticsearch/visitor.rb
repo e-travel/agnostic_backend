@@ -6,7 +6,7 @@ module AgnosticBackend
         private
 
         def visit_criteria_equal(subject)
-          { "match" => { visit(subject.attribute) => visit(subject.value) }
+          { "term" => { visit(subject.attribute) => visit(subject.value) } }
         end
 
         def visit_criteria_not_equal(subject)
@@ -98,7 +98,7 @@ module AgnosticBackend
         end
 
         def visit_criteria_contains(subject)
-          { "match" => { visit(subject.attribute) => visit(subject.value) }
+          { "match" => { visit(subject.attribute) => visit(subject.value) } }
         end
 
         def visit_criteria_starts(subject)
@@ -110,11 +110,11 @@ module AgnosticBackend
         end
 
         def visit_operations_and(subject)
-          { "must" => subject.operands.map{|o| visit(o)}
+          { "must" => subject.operands.map{|o| visit(o)} }
         end
 
         def visit_operations_or(subject)
-          { "should" => subject.operands.map{|o| visit(o)}
+          { "should" => subject.operands.map{|o| visit(o)} }
         end
 
         def visit_operations_ascending(subject)
@@ -132,7 +132,7 @@ module AgnosticBackend
         end
 
         def visit_expressions_where(subject)
-          { "filtered" => {"filter" => {"bool" => visit(subject.criterion) }}}
+          {"bool"  => visit(subject.criterion) }
         end
 
         def visit_expressions_select(subject)
@@ -140,7 +140,7 @@ module AgnosticBackend
         end
 
         def visit_expressions_order(subject)
-          { "must" => subject.qualifiers.map{|o| visit(o)}
+          { "must" => subject.qualifiers.map{|o| visit(o)} }
         end
 
         def visit_expressions_limit(subject)
@@ -167,13 +167,13 @@ module AgnosticBackend
           when :integer
             subject.value
           when :date
-            "'#{subject.value.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}'"
+            "#{subject.value.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}"
           when :double
             subject.value
           when :boolean
-            "'#{subject.value}'"
+            subject.value
           when :string,:string_array,:text,:text_array
-            "'#{subject.value}'"
+            subject.value
           else
             subject.value
           end

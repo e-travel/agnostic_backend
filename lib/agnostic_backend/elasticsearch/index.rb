@@ -18,7 +18,7 @@ module AgnosticBackend
       end
 
       def query_builder
-        raise "Json Implement Me"
+        AgnosticBackend::Queryable::Elasticsearch::QueryBuilder.new(self)
       end
 
       def schema

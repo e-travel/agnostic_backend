@@ -15,6 +15,10 @@ module AgnosticBackend
         end
       end
 
+      def search(body)
+        client.post(path: "{index_type_path}/_search", body: body)
+      end
+
       private
 
       def client
@@ -39,6 +43,14 @@ module AgnosticBackend
 
         "/#{index.index_name}/#{index.type}"
       end
+
+      def date_format(document)
+        document.each do |k, v|
+        if v.is_a?(Time)
+          document[k] = v.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+        end
+      end
+    end
     end
   end
 end
