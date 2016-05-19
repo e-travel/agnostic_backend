@@ -12,7 +12,7 @@ module AgnosticBackend
       end
 
       def method_missing(method_name)
-        if options.has_key? method_name
+        if @options.has_key? method_name
           @options[method_name]
         else
           super
@@ -22,7 +22,7 @@ module AgnosticBackend
       private
 
       def to_local(remote_type)
-        AgnosticBackend::Elasticsearch::IndexField::TYPE_MAPPINGS.find{|ltype, rtype| remote_type == rtype}.try(:last)
+        AgnosticBackend::Elasticsearch::IndexField::TYPE_MAPPINGS.find{|ltype, rtype| remote_type == rtype}.try(:first)
       end
 
     end
