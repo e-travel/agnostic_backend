@@ -4,16 +4,19 @@ module AgnosticBackend
 
       attr_reader :index_name,
                   :type,
-                  :endpoint
-      
+                  :endpoint,
+                  :enable_all
+      # TODO: add authentication of some sort
+
       def initialize(indexable_klass, **options)
         super(indexable_klass)
         @index_name = parse_option(options, :index_name)
         @type = parse_option(options, :type)
         @endpoint = parse_option(options, :endpoint)
+        @enable_all = parse_option(options, :enable_all)
       end
 
-      def indexer      
+      def indexer
         AgnosticBackend::Elasticsearch::Indexer.new(self)
       end
 
@@ -25,36 +28,41 @@ module AgnosticBackend
         @schema ||= @indexable_klass.schema { |ftype| ftype }
       end
 
-      def elasticsearch_client
-        @elasticsearch_client ||= AgnosticBackend::Elasticsearch::Client.new(endpoint: endpoint)
-      end
-
-      def create_index
-        elasticsearch_client.put(path: index_name)
+      def client
+        @client ||= AgnosticBackend::Elasticsearch::Client.new(endpoint: endpoint)
       end
 
       def configure
-        define_mappings(indexer.flatten(schema))
+        body = mappings(indexer.flatten(schema))
+        client.send_request(:put, path: "#{index_name}/_mapping/#{type}", body: body)
+      end
+
+      def create
+        client.send_request(:put, path: index_name)
+      end
+
+      def destroy!
+        client.send_request(:delete, path: index_name)
+      end
+
+      def exists?
+        response = client.send_request(:head, path: index_name)
+        response.success?
       end
 
       private
-      
-      def define_mappings(flat_schema)
-        index_fields(flat_schema).each do |index_field|
-          elasticsearch_client.put(
-            path: index_mapping_type_path, 
-            body: { "properties" => index_field.definition })
-        end
+
+      def mappings(flat_schema)
+        {
+          "_all" => { "enabled" => enable_all },
+          "properties" => index_fields(flat_schema).map{|field| field.definition}.reduce({}, &:merge)
+        }
       end
 
       def index_fields(flat_schema)
         flat_schema.map do |field_name, field_type|
           AgnosticBackend::Elasticsearch::IndexField.new(field_name, field_type)
         end
-      end
-
-      def index_mapping_type_path
-        "#{index_name}/_mapping/#{type}"
       end
     end
   end

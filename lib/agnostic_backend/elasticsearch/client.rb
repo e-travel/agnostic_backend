@@ -2,33 +2,45 @@ require 'faraday'
 
 module AgnosticBackend
   module Elasticsearch
+
     class Client
       attr_reader :endpoint
 
       def initialize(endpoint:)
         @endpoint = endpoint
-        @connection = ::Faraday::Connection.new(url: endpoint)
+        @connection = Faraday::Connection.new(url: endpoint)
       end
-      
-      # Alias methods to make an HTTP method call to remote ES endpoint
-      # @param [Hash] a Hash containg all the required 
-      # key-value pairs to make a request: { path:, params:, body: }
-      # path: URI path
-      # params: any URI query parameters TODO: NOT IMPLEMENTED
-      # body: any POST / PUT payload
-      # @returns [Faraday] instance
-      [:post, :put, :delete, :head].each do |method_name|
-        define_method(method_name) do |*args|
-          perform_request(method_name, *args)
+
+      # returns an array of RemoteIndexFields (or nil)
+      def describe_index_fields(index_name, type)
+        response = send_request(:get, path: "#{index_name}/_mapping/#{type}")
+        if response.success?
+          body = ActiveSupport::JSON.decode(response.body)
+          return if body.empty?
+          fields = body[index_name.to_s]["mappings"][type.to_s]["properties"]
+
+          fields.map do |field_name, properties|
+            properties = Hash[ properties.map{|k,v| [k.to_sym, v]} ]
+            type = properties.delete(:type)
+            AgnosticBackend::Elasticsearch::RemoteIndexField.new field_name, type, **properties
+          end
         end
       end
 
-      private 
-      def perform_request(method, path: "", params: nil, body: nil)
-        @connection.run_request(method.downcase.to_sym, 
-                                path, 
-                                ( body ? ActiveSupport::JSON.encode(body): nil ), 
-                                {'Content-Type' => 'application/json'})
+      # sends an HTTP request to the ES server
+      # returns a Faraday::Response instance
+      def send_request(http_method, path: "", body: nil)
+        puts "REQUEST: #{http_method} #{path} with payload #{body.present? ? body : "nil"}"
+        @connection.run_request(http_method.downcase.to_sym,
+                                path.to_s,
+                                (body.present? ? ActiveSupport::JSON.encode(body): nil),
+                                default_headers)
+      end
+
+      private
+
+      def default_headers
+        {'Content-Type' => 'application/json'}
       end
     end
   end

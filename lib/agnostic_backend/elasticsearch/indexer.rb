@@ -22,7 +22,7 @@ module AgnosticBackend
       private
 
       def client
-        index.elasticsearch_client
+        index.client
       end
 
       def prepare(document)

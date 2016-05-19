@@ -2,26 +2,37 @@ require 'spec_helper'
 require 'webmock/rspec'
 
 describe AgnosticBackend::Elasticsearch::Indexer do
-  before do
-    class IndexableClass
-      include AgnosticBackend::Indexable
-      define_index_fields do
-        integer :id
-        string :a_string
-        double :a_double
-        boolean :a_boolean
-        text :a_text
-        text_array :a_text_array
-      end
-      define_index_notifier { self }
-    end
 
-    AgnosticBackend::Indexable::Config.configure_index(
-      IndexableClass,
-      AgnosticBackend::Elasticsearch::Index, endpoint: 'http://localhost:9200', index_name: 'index', type: 'type')
+  let(:field_block) do
+    proc {
+      integer :id
+      string :a_string
+      string_array :a_string_array
+      double :a_double
+      boolean :a_boolean
+      text :a_text
+      text_array :a_text_array
+    }
   end
 
-  let(:index) { IndexableClass.create_index }
+  before do
+    Object.send(:remove_const, :ESIndexableObject) if Object.constants.include? :ESIndexableObject
+    class ESIndexableObject; end
+    ESIndexableObject.send(:include, AgnosticBackend::Indexable)
+    ESIndexableObject.define_index_fields &field_block
+
+    if AgnosticBackend::Indexable::Config.indices[ESIndexableObject.name].nil?
+      AgnosticBackend::Indexable::Config.configure_index(
+        ESIndexableObject,
+        AgnosticBackend::Elasticsearch::Index,
+        endpoint: 'http://localhost:9200',
+        index_name: 'index',
+        type: 'type',
+        enable_all: false)
+    end
+  end
+
+  let(:index) { ESIndexableObject.create_index }
   subject { index.indexer }
 
   it { expect(subject).to be_a(AgnosticBackend::Indexer) }
@@ -42,9 +53,9 @@ describe AgnosticBackend::Elasticsearch::Indexer do
 
 
       before do
-        index_response = {"_index"=>"index", 
-                          "_type"=>"type", "_id"=>"AVOPav44RRb-B-7BHyCn", 
-                          "_version"=>1, 
+        index_response = {"_index"=>"index",
+                          "_type"=>"type", "_id"=>"AVOPav44RRb-B-7BHyCn",
+                          "_version"=>1,
                           "created"=>true}
         stub_request(:put, 'http://localhost:9200/index/type/1')
           .with(body: hash_including(id: 1, title: 'title', text: 'text', date_created: '10/2/1988'))
@@ -66,9 +77,9 @@ describe AgnosticBackend::Elasticsearch::Indexer do
       end
 
       before do
-        index_response = {"_index"=>"index", 
-                          "_type"=>"type", "_id"=>"1", 
-                          "_version"=>1, 
+        index_response = {"_index"=>"index",
+                          "_type"=>"type", "_id"=>"1",
+                          "_version"=>1,
                           "created"=>true}
         stub_request(:post, 'http://localhost:9200/index/type')
           .with(body: hash_including("title" => 'title', "text" => 'text', "date_created" => 'date'))
