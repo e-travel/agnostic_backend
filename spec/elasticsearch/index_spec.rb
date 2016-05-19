@@ -46,7 +46,7 @@ describe AgnosticBackend::Elasticsearch::Index do
   end
   
   describe "#query_builder" do
-    pending
+    skip
   end
  
   describe "#create_index" do
