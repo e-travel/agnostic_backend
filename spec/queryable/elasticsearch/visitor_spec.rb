@@ -83,9 +83,9 @@ describe AgnosticBackend::Queryable::Elasticsearch::Visitor do
     describe '#visit_operations_not' do
       let(:operand) { AgnosticBackend::Queryable::Criteria::Equal.new(attribute: 'a_string', value: 'value', context: context)}
       let(:visitor_subject) { AgnosticBackend::Queryable::Operations::Not.new(operand: operand, context: context)}
-      it 'should evaluate to {"must_not": [{"term": {"a_string": "value"}}]}' do
+      it 'should evaluate to {"bool": {"must_not": [{"term": {"a_string": "value"}}]}}' do
         expect(subject).to receive(:visit_operations_not).and_call_original
-        expect(subject.visit(visitor_subject)).to eq({"must_not"=>[{"term"=>{"a_string"=>"value"}}]})
+        expect(subject.visit(visitor_subject)).to eq({"bool"=>{"must_not"=>[{"term"=>{"a_string"=>"value"}}]}})
       end
     end
 
@@ -115,18 +115,18 @@ describe AgnosticBackend::Queryable::Elasticsearch::Visitor do
     describe '#visit_operations_and' do
       let(:visitor_subject) { AgnosticBackend::Queryable::Operations::And.new(operands: [left_operand, center_operand, right_operand], context: context)}
 
-      it 'should evaluate to {"must": [operator_1, operator_2, operator_3]}' do
+      it 'should evaluate to {"bool": {"must": [operator_1, operator_2, operator_3]}}' do
         expect(subject).to receive(:visit_operations_and).and_call_original
-        expect(subject.visit(visitor_subject)).to eq({"must"=>[{"term"=>{"an_integer"=>10}}, {"term"=>{"a_string"=>"value"}}, {"term"=>{"a_date"=>"#{the_date.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}"}}]})
+        expect(subject.visit(visitor_subject)).to eq({"bool" => {"must"=>[{"term"=>{"an_integer"=>10}}, {"term"=>{"a_string"=>"value"}}, {"term"=>{"a_date"=>"#{the_date.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}"}}]}})
       end
     end
 
     describe '#visit_operations_or' do
       let(:visitor_subject) { AgnosticBackend::Queryable::Operations::Or.new(operands: [left_operand, center_operand, right_operand], context: context)}
 
-      it 'should evaluate to {"should": [operator_1, operator_2, operator_3]}' do
+      it 'should evaluate to {"bool": {"should": [operator_1, operator_2, operator_3]}}' do
         expect(subject).to receive(:visit_operations_or).and_call_original
-        expect(subject.visit(visitor_subject)).to eq({"should"=>[{"term"=>{"an_integer"=>10}}, {"term"=>{"a_string"=>"value"}}, {"term"=>{"a_date"=>"#{the_date.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}"}}]})
+        expect(subject.visit(visitor_subject)).to eq({"bool" =>{"should"=>[{"term"=>{"an_integer"=>10}}, {"term"=>{"a_string"=>"value"}}, {"term"=>{"a_date"=>"#{the_date.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}"}}]}})
       end
     end
   end

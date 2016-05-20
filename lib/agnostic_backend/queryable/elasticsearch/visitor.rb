@@ -106,15 +106,15 @@ module AgnosticBackend
         end
 
         def visit_operations_not(subject)
-          { "must_not" => subject.operands.map{|o| visit(o)} }
+          {"bool" =>  { "must_not" => subject.operands.map{|o| visit(o)} } }
         end
 
         def visit_operations_and(subject)
-          { "must" => subject.operands.map{|o| visit(o)} }
+          {"bool" =>  { "must" => subject.operands.map{|o| visit(o)} } }
         end
 
         def visit_operations_or(subject)
-          { "should" => subject.operands.map{|o| visit(o)} }
+          {"bool" => { "should" => subject.operands.map{|o| visit(o)} } }
         end
 
         def visit_operations_ascending(subject)
@@ -136,7 +136,7 @@ module AgnosticBackend
         end
 
         def visit_expressions_where(subject)
-          { "filter" => {"bool"  => visit(subject.criterion) } }
+          { "filter" => visit(subject.criterion)  }
         end
 
         def visit_expressions_select(subject)

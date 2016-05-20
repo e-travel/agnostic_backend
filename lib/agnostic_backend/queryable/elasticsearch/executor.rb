@@ -5,9 +5,9 @@ module AgnosticBackend
         include AgnosticBackend::Utilities
 
         def execute
+          response = client.send_request(:post, path: "#{index.index_name}/#{index.type}/_search", body: params)
           pp params
-          response = indexer.search(params)
-          ResultSet.new(response, query)
+          ResultSet.new(ActiveSupport::JSON.decode(response.body), query)
         end
 
         def to_s
@@ -22,14 +22,17 @@ module AgnosticBackend
         end
 
         def params
-          result = {}
-          result.deep_merge({"query" => query_expression})
+          query.accept(visitor)
         end
 
         private
 
-        def indexer
-          query.context.index.indexer
+        def client
+          index.client
+        end
+
+        def index
+          query.context.index
         end
 
         def filter_query
