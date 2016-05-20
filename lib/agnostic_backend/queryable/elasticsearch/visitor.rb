@@ -10,7 +10,7 @@ module AgnosticBackend
         end
 
         def visit_criteria_not_equal(subject)
-          visit_operations_not(visit_criteria_equal(subject))
+          { "must_not" => visit_criteria_equal(subject) }
         end
 
         def visit_criteria_greater(subject)
@@ -106,7 +106,7 @@ module AgnosticBackend
         end
 
         def visit_operations_not(subject)
-          { "not" => visit(subject.operand) }
+          { "must_not" => subject.operands.map{|o| visit(o)} }
         end
 
         def visit_operations_and(subject)
@@ -126,21 +126,25 @@ module AgnosticBackend
         end
 
         def visit_query(subject)
-          {
-            "query" => subject.children.map{|c| visit(c)}
-          }
+          result = {}
+          subject.children.each do |c|
+            result.merge!(visit(c)) do |key, v1, v2|
+              v1 + v2
+            end
+          end
+          result
         end
 
         def visit_expressions_where(subject)
-          {"bool"  => visit(subject.criterion) }
+          { "filter" => {"bool"  => visit(subject.criterion) } }
         end
 
         def visit_expressions_select(subject)
-          { "source" => subject.projections.map{|c| visit(c)} } #return=
+          { "fields" => subject.projections.map{|c| visit(c)} } #return=
         end
 
         def visit_expressions_order(subject)
-          { "must" => subject.qualifiers.map{|o| visit(o)} }
+          { "sort" => subject.qualifiers.map{|o| visit(o)} }
         end
 
         def visit_expressions_limit(subject)
