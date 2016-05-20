@@ -26,8 +26,7 @@ describe AgnosticBackend::Elasticsearch::Index do
         AgnosticBackend::Elasticsearch::Index,
         endpoint: 'http://localhost:9200',
         index_name: 'index',
-        type: 'type',
-        enable_all: false)
+        type: 'type')
     end
   end
 

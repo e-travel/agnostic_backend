@@ -13,7 +13,7 @@ module AgnosticBackend
         @index_name = parse_option(options, :index_name)
         @type = parse_option(options, :type)
         @endpoint = parse_option(options, :endpoint)
-        @enable_all = parse_option(options, :enable_all)
+        @enable_all = parse_option(options, :enable_all, optional: true, default: false)
       end
 
       def indexer
