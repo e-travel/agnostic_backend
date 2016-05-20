@@ -9,6 +9,15 @@ module AgnosticBackend
                             body: document)
       end
 
+      def publish_all(documents)
+        response = client.send_request(:post,
+                                       path: "/#{index.index_name}/#{index.type}/_bulk",
+                                       body: convert_to_bulk_upload_string(documents))
+        body = ActiveSupport::JSON.decode(response.body) rescue {}
+        raise IndexingError.new, "Error in bulk upload" if body["errors"]
+        response
+      end
+
       private
 
       def client
@@ -35,6 +44,14 @@ module AgnosticBackend
             document[k] = v.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
           end
         end
+      end
+
+      def convert_to_bulk_upload_string(documents)
+        documents.map do |document|
+          header = { "index" => {"_id" => document["id"]}}.to_json
+          document = ActiveSupport::JSON.encode transform(prepare(document))
+          "#{header}\n#{document}\n"
+        end.join("\n")
       end
     end
   end

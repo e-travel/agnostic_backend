@@ -60,6 +60,43 @@ describe AgnosticBackend::Elasticsearch::Indexer do
     end
   end
 
+  describe '#publish_all' do
+    let(:other_document) do
+      {
+        "id" => 2,
+        "title" => "Another title",
+        "text" =>  "Another text",
+        "date_created" =>  "10/3/1988"
+      }
+    end
+    let(:client) { subject.send(:client) }
+    before { allow(subject).to receive(:client).and_return(client) }
+
+    it 'should convert the data to a string' do
+      allow(client).to receive(:send_request)
+      expect(subject).to receive(:convert_to_bulk_upload_string).with([document, other_document])
+      subject.publish_all [document, other_document]
+    end
+
+    it 'should make an appopriate request to ES' do
+      allow(subject).to receive(:convert_to_bulk_upload_string).and_return 'hello'
+      expect(client).to receive(:send_request).with(:post,
+                                                    path: "/index/type/_bulk",
+                                                    body: 'hello')
+      subject.publish_all [document]
+    end
+
+    it 'should raise an error if at least one of the docs fails to be indexed' do
+      response = double("Response", body: {"errors" => true}.to_json)
+      allow(subject).to receive(:convert_to_bulk_upload_string).and_return 'hello'
+      expect(client).to receive(:send_request).with(:post,
+                                                    path: "/index/type/_bulk",
+                                                    body: 'hello').
+                         and_return response
+      expect { subject.publish_all [document] }.to raise_error AgnosticBackend::IndexingError
+    end
+  end
+
   describe '#prepare' do
     it 'should return the document as is' do
       expect(subject.send(:prepare, document)).to eq document
@@ -70,6 +107,34 @@ describe AgnosticBackend::Elasticsearch::Indexer do
       it 'should raise an error' do
         expect{ subject.send(:prepare, document) }.to raise_error AgnosticBackend::IndexingError
       end
+    end
+  end
+
+  describe '#convert_to_bulk_upload_string' do
+    it 'should convert the array of hashes to the ES bulk upload format' do
+      other_document = {
+        "id" => 2,
+        "title" => "Another title",
+        "text" =>  "Another text",
+        "date_created" =>  "10/3/1988"
+      }
+      formatted_string = <<-JSON
+{"index":{"_id":1}}
+{"id":1,"title":"title","text":"text","date_created":"10/2/1988"}
+
+{"index":{"_id":2}}
+{"id":2,"title":"Another title","text":"Another text","date_created":"10/3/1988"}
+JSON
+
+      fmt = subject.send(:convert_to_bulk_upload_string, [document, other_document])
+      expect(fmt).to eq formatted_string
+    end
+
+    it 'should apply the preparation/transformation chain to each document' do
+      transformed_document = subject.send(:transform, document)
+      expect(subject).to receive(:transform).with(document).and_call_original
+      expect(subject).to receive(:prepare).with(transformed_document).and_call_original
+      subject.send(:convert_to_bulk_upload_string, [document])
     end
   end
 end
