@@ -48,12 +48,21 @@ describe AgnosticBackend::Elasticsearch::Client do
       subject.send(:send_request, 'GET', path: path, body: nil)
     end
 
-    context 'when a body is specified' do
+    context 'when the body is supplied as a Hash' do
       let(:body) { {a: 1} }
-      it 'should encode it to JSON' do
+      it 'should encode it to JSON and use it as payload' do
         stub_request(:post, URI.join(host, path)).with(body: body,
                                                        headers: headers)
         subject.send(:send_request, 'POST', path: path, body: body)
+      end
+    end
+
+    context 'when the body is supplied as a string' do
+      let(:body) { {a: 1} }
+      it 'should use it as is for the payload' do
+        stub_request(:post, URI.join(host, path)).with(body: body,
+                                                       headers: headers)
+        subject.send(:send_request, 'POST', path: path, body: body.to_json)
       end
     end
   end

@@ -28,11 +28,15 @@ module AgnosticBackend
       end
 
       # sends an HTTP request to the ES server
+      # @body is taken to be either
+      # (a) a Hash (in which case it will be encoded to JSON), or
+      # (b) a string (in which case it will be assumed to contain JSON data)
       # returns a Faraday::Response instance
       def send_request(http_method, path: "", body: nil)
+        body = ActiveSupport::JSON.encode(body) if body.is_a? Hash
         @connection.run_request(http_method.downcase.to_sym,
                                 path.to_s,
-                                (body.present? ? ActiveSupport::JSON.encode(body): nil),
+                                body,
                                 default_headers)
       end
 
