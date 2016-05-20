@@ -7,7 +7,37 @@ describe AgnosticBackend::Elasticsearch::Client do
   let(:host) { 'http://localhost:9200' }
 
   describe '#describe_index_fields' do
-    skip
+    context 'when response has a payload' do
+      let(:response) do
+        {
+          'index' => {
+            'mappings' => {
+              'type' => {
+                'properties' => {
+                  'field_a' => {'type' => 'integer'},
+                  'field_b' => {'type' => 'string' }
+                }
+              }
+            }
+          }
+        }
+      end
+      before { stub_request(:get, URI.join(host, "/index/_mapping/type")).
+               to_return(body: response.to_json) }
+
+      it 'should return an array of RemoteIndexFields' do
+        rfields = subject.describe_index_fields('index', 'type')
+        expect(rfields.all?{|rfield| rfield.is_a? AgnosticBackend::Elasticsearch::RemoteIndexField}).
+          to be true
+        expect(rfields.map(&:type)).to eq [:integer, :string]
+      end
+    end
+
+    context 'when the response is empty' do
+      let(:response) { nil }
+      before { stub_request(:get, URI.join(host, "/index/_mapping/type")) }
+      it { expect(subject.describe_index_fields('index', 'type')).to be_nil }
+    end
   end
 
   describe '#send_request' do

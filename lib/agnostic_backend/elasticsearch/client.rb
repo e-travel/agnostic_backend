@@ -15,8 +15,8 @@ module AgnosticBackend
       def describe_index_fields(index_name, type)
         response = send_request(:get, path: "#{index_name}/_mapping/#{type}")
         if response.success?
-          body = ActiveSupport::JSON.decode(response.body)
-          return if body.empty?
+          body = ActiveSupport::JSON.decode(response.body) if response.body.present?
+          return if body.blank?
           fields = body[index_name.to_s]["mappings"][type.to_s]["properties"]
 
           fields.map do |field_name, properties|
@@ -30,7 +30,6 @@ module AgnosticBackend
       # sends an HTTP request to the ES server
       # returns a Faraday::Response instance
       def send_request(http_method, path: "", body: nil)
-        puts "REQUEST: #{http_method} #{path} with payload #{body.present? ? body : "nil"}"
         @connection.run_request(http_method.downcase.to_sym,
                                 path.to_s,
                                 (body.present? ? ActiveSupport::JSON.encode(body): nil),

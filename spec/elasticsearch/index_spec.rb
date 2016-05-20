@@ -67,8 +67,9 @@ describe AgnosticBackend::Elasticsearch::Index do
   end
 
   describe "#query_builder" do
-    skip
+    it { expect(subject.query_builder).to be_a AgnosticBackend::Queryable::Elasticsearch::QueryBuilder }
   end
+
   describe '#configure' do
     it 'should flatten the schema' do
       allow(subject).to receive(:indexer).and_return(subject.indexer)
