@@ -6,7 +6,6 @@ module AgnosticBackend
                   :type,
                   :endpoint,
                   :enable_all
-      # TODO: add authentication of some sort
 
       def initialize(indexable_klass, **options)
         super(indexable_klass)
