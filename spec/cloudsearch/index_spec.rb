@@ -192,6 +192,11 @@ describe AgnosticBackend::Cloudsearch::Index do
         expect{subject.send(:parse_option, options, :b)}.to raise_error "b must be specified"
       end
     end
+    context 'when option is optional and does not exist in options' do
+      it 'should return the default value' do
+        expect(subject.send(:parse_option, options, :b, optional: true, default: 2)).to eq 2
+      end
+    end
   end
 
 end

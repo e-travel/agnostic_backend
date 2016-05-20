@@ -21,9 +21,11 @@ module AgnosticBackend
       raise NotImplementedError
     end
 
-    def parse_option(options, option_name)
+    def parse_option(options, option_name, optional: false, default: nil)
       if options.has_key?(option_name)
         options[option_name]
+      elsif optional
+        default
       else
         raise "#{option_name} must be specified"
       end
