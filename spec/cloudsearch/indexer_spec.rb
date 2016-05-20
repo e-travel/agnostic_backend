@@ -61,7 +61,7 @@ describe AgnosticBackend::Cloudsearch::Indexer do
   end
 
   describe '#prepare' do
-    let(:document) { double("Document") }
+    let(:document) { {"id" => 1} }
     it { expect(subject.send(:prepare, document)).to eq document }
   end
 

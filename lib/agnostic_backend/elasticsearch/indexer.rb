@@ -3,20 +3,10 @@ module AgnosticBackend
     class Indexer < AgnosticBackend::Indexer
       include AgnosticBackend::Utilities
 
-      def initialize(index)
-        super
-      end
-
       def publish(document)
-        if document["id"].present?
-          client.put(path: index_type_path(document["id"]), body: document)
-        else
-          client.post(path: index_type_path, body: document)
-        end
-      end
-
-      def search(body)
-        client.post(path: "{index_type_path}/_search", body: body)
+        client.send_request(:put,
+                            path: "/#{index.index_name}/#{index.type}/#{document["id"]}",
+                            body: document)
       end
 
       private
@@ -26,6 +16,7 @@ module AgnosticBackend
       end
 
       def prepare(document)
+        raise IndexingError.new, "Document does not have an ID field" unless document["id"].present?
         document
       end
 
@@ -34,23 +25,17 @@ module AgnosticBackend
 
         document = flatten document
         document = reject_blank_values_from document
-        document = date_format document
+        document = format_dates_in document
         document
       end
 
-      def index_type_path(doc_id = nil)
-        return "/#{index.index_name}/#{index.type}/#{doc_id}" if doc_id.present?
-
-        "/#{index.index_name}/#{index.type}"
-      end
-
-      def date_format(document)
+      def format_dates_in(document)
         document.each do |k, v|
-        if v.is_a?(Time)
-          document[k] = v.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+          if v.is_a?(Time)
+            document[k] = v.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+          end
         end
       end
-    end
     end
   end
 end

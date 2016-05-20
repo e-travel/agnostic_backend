@@ -1,4 +1,7 @@
 module AgnosticBackend
+
+  class IndexingError < StandardError; end
+
   class Indexer
 
     attr_reader :index

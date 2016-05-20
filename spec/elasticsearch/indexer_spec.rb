@@ -31,6 +31,15 @@ describe AgnosticBackend::Elasticsearch::Indexer do
     end
   end
 
+  let(:document) do
+    {
+      "id" => 1,
+      "title" => "title",
+      "text" =>  "text",
+      "date_created" =>  "10/2/1988"
+    }
+  end
+
   let(:index) { ESIndexableObject.create_index }
   subject { index.indexer }
 
@@ -40,54 +49,26 @@ describe AgnosticBackend::Elasticsearch::Indexer do
   it { expect(subject.index.index_name).to be_present }
 
   describe "#publish" do
-    context "when document has an id" do
-      let(:document) do
-        {
-          "id" => 1,
-          "title" => "title",
-          "text" =>  "text",
-          "date_created" =>  "10/2/1988"
-        }
-      end
+    let(:client) { subject.send(:client) }
+    before { allow(subject).to receive(:client).and_return(client) }
 
-
-      before do
-        index_response = {"_index"=>"index",
-                          "_type"=>"type", "_id"=>"AVOPav44RRb-B-7BHyCn",
-                          "_version"=>1,
-                          "created"=>true}
-        stub_request(:put, 'http://localhost:9200/index/type/1')
-          .with(body: hash_including(id: 1, title: 'title', text: 'text', date_created: '10/2/1988'))
-          .to_return(status: 201, body: JSON.generate(index_response))
-      end
-
-      it 'should index a document to elastic search' do
-        response = subject.publish(document)
-        expect(response.status).to eq(201)
-      end
+    it 'should make the appropriate request to ES' do
+      expect(client).to receive(:send_request).with(:put,
+                                                    path: "/index/type/1",
+                                                    body: document)
+      subject.publish(document)
     end
-    context "when document does not have an id" do
-      let(:document) do
-        {
-          "title" => "title",
-          "text" =>  "text",
-          "date_created" =>  "date"
-        }
-      end
+  end
 
-      before do
-        index_response = {"_index"=>"index",
-                          "_type"=>"type", "_id"=>"1",
-                          "_version"=>1,
-                          "created"=>true}
-        stub_request(:post, 'http://localhost:9200/index/type')
-          .with(body: hash_including("title" => 'title', "text" => 'text', "date_created" => 'date'))
-          .to_return(status: 201, body: JSON.generate(index_response))
-      end
+  describe '#prepare' do
+    it 'should return the document as is' do
+      expect(subject.send(:prepare, document)).to eq document
+    end
 
-      it 'should index a document to elastic search' do
-        response = subject.publish(document)
-        expect(response.status).to eq 201
+    context 'when document does not have an id key' do
+      let(:document) { {} }
+      it 'should raise an error' do
+        expect{ subject.send(:prepare, document) }.to raise_error AgnosticBackend::IndexingError
       end
     end
   end

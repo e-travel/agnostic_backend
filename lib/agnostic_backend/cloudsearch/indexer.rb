@@ -40,6 +40,7 @@ module AgnosticBackend
       end
 
       def prepare(document)
+        raise IndexingError.new "Document does not have an ID field" unless document["id"].present?
         document
       end
 
