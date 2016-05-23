@@ -98,11 +98,11 @@ module AgnosticBackend
         end
 
         def visit_criteria_contains(subject)
-          { "match" => { visit(subject.attribute) => visit(subject.value) } }
+          { "wildcard" => { visit(subject.attribute) => '*' + visit(subject.value) + '*'} }
         end
 
         def visit_criteria_starts(subject)
-          { "prefix" => { visit(subject.attribute) => visit(subject.value) } }
+          { "wildcard" => { visit(subject.attribute) => '*' +   visit(subject.value) } }
         end
 
         def visit_operations_not(subject)

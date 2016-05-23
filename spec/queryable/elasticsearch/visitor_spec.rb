@@ -64,17 +64,17 @@ describe AgnosticBackend::Queryable::Elasticsearch::Visitor do
 
     describe '#visit_criteria_contains' do
       let(:visitor_subject) { AgnosticBackend::Queryable::Criteria::Contains.new(attribute: 'a_string', value: 'value', context: context)}
-      it 'should evaluate to {"match":{"a_string":"value"}}' do
+      it 'should evaluate to {"wildcard":{"a_string":"*value*"}}' do
         expect(subject).to receive(:visit_criteria_contains).and_call_original
-        expect(subject.visit(visitor_subject)).to eq({"match"=>{"a_string"=>"value"}})
+        expect(subject.visit(visitor_subject)).to eq({"wildcard"=>{"a_string"=>"*value*"}})
       end
     end
 
     describe '#visit_criteria_starts' do
       let(:visitor_subject) { AgnosticBackend::Queryable::Criteria::Starts.new(attribute: 'a_string', value: 'value', context: context)}
-      it 'should evaluate to {"prefix":{"a_string":"value"}}' do
+      it 'should evaluate to {"wildcard":{"a_string":"*value"}}' do
         expect(subject).to receive(:visit_criteria_starts).and_call_original
-        expect(subject.visit(visitor_subject)).to eq({"prefix"=>{"a_string"=>"value"}})
+        expect(subject.visit(visitor_subject)).to eq({"wildcard"=>{"a_string"=>"*value"}})
       end
     end
   end
