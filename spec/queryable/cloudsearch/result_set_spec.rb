@@ -21,7 +21,7 @@ describe AgnosticBackend::Queryable::Cloudsearch::ResultSet do
     end
   end
 
-  describe '#cursor' do
+  describe '#scroll_cursor' do
     it 'should be cursor attribute from raw_results.hits when cursor present' do
       expect(hits).to receive(:cursor).and_return 'abcdef'
       expect(subject.scroll_cursor).to eq 'abcdef'
