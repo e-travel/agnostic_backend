@@ -156,10 +156,17 @@ module AgnosticBackend
         end
 
         def visit_expressions_scroll_cursor(subject)
-          { 
-            "scroll" => "1m",
-            "scroll_id" => visit(subject.scroll_cursor)
+          result =  { 
+            "scroll" => "1m"
           }
+
+          result.merge!(
+            {
+              "scroll_id" => visit(subject.scroll_cursor)
+            }
+          ) if visit(subject.scroll_cursor) != 'initial'
+
+          result
         end
 
         def visit_attribute(subject)

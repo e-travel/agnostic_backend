@@ -243,11 +243,22 @@ describe AgnosticBackend::Queryable::Elasticsearch::Visitor do
     end
 
     describe '#visit_Elasticsearch_expressions_cursor' do
-      let(:visitor_subject) { AgnosticBackend::Queryable::Expressions::ScrollCursor.new(value: 'scroll_cursor', context: context)}
+      context 'when scroll cusror is set to initial' do
+        let(:visitor_subject) { AgnosticBackend::Queryable::Expressions::ScrollCursor.new(value: 'initial', context: context)}
 
-      it 'should evaluate to {"scroll":"1m", "scroll_id":"scroll_cursor"}' do
-        expect(subject).to receive(:visit_expressions_scroll_cursor).and_call_original
-        expect(subject.visit(visitor_subject)).to eq({"scroll"=>"1m", "scroll_id"=>"scroll_cursor"})
+        it 'should evaluate to {"scroll":"1m"}' do
+          expect(subject).to receive(:visit_expressions_scroll_cursor).and_call_original
+          expect(subject.visit(visitor_subject)).to eq({"scroll"=>"1m"})
+        end
+      end
+
+      context 'when scroll cursor is not set to initial' do
+        let(:visitor_subject) { AgnosticBackend::Queryable::Expressions::ScrollCursor.new(value: 'scroll_cursor', context: context)}
+
+        it 'should evaluate to {"scroll":"1m", "scroll_id":"scroll_cursor"}' do
+          expect(subject).to receive(:visit_expressions_scroll_cursor).and_call_original
+          expect(subject.visit(visitor_subject)).to eq({"scroll"=>"1m", "scroll_id"=>"scroll_cursor"})
+        end
       end
     end
   end

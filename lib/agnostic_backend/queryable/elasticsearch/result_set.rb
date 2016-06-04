@@ -9,7 +9,7 @@ module AgnosticBackend
         end
 
         def scroll_cursor
-          
+          raw_results["_scroll_id"]
         end
 
         private

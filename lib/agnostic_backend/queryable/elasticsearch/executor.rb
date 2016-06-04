@@ -4,8 +4,12 @@ module AgnosticBackend
       class Executor < AgnosticBackend::Queryable::Executor
         include AgnosticBackend::Utilities
 
-        def execute          
-          response = client.send_request(:post, path: "#{index.index_name}/#{index.type}/_search", body: params)
+        def execute
+          if scroll_cursor.present?
+            response = client.send_request(:post, path: "_search/scroll", body: params)
+          else 
+            response = client.send_request(:post, path: "#{index.index_name}/#{index.type}/_search", body: params)
+          end          
           ResultSet.new(ActiveSupport::JSON.decode(response.body), query)
         end
 
@@ -14,7 +18,7 @@ module AgnosticBackend
         end
 
         def params
-          query.accept(visitor)
+          scroll_cursor.present? ? scroll_cursor : query.accept(visitor)
         end
 
         private
@@ -25,6 +29,10 @@ module AgnosticBackend
 
         def index
           query.context.index
+        end
+
+        def scroll_cursor
+          scroll_cursor_expression.accept(visitor) if scroll_cursor_expression
         end
       end
     end
