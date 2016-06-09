@@ -68,12 +68,13 @@ describe AgnosticBackend::Indexable::ContentManager do
   end
 
   describe '#extract_contents_from' do
+    let(:observer) { AgnosticBackend::Indexable::ObjectObserver.new }
     before { subject.add_definitions &(Proc.new { string :a }) }
     let(:object) { double('Object') }
     it 'should evaluate the field\'s value in the context of the object' do
       field = subject.contents['a']
       expect(field).to receive(:evaluate).with(context: object)
-      contents = subject.extract_contents_from(object, :index_name)
+      contents = subject.extract_contents_from(object, :index_name, observer: observer)
       expect(contents).to have_key 'a'
     end
 
@@ -85,9 +86,14 @@ describe AgnosticBackend::Indexable::ContentManager do
         before { allow(object).to receive(:a).and_return child }
         context 'when the field value responds to #generate_document' do
           it 'should generate a document for the nested field (struct)' do
-            expect(child).to receive(:generate_document).with(for_index: :index_name)
-            contents = subject.extract_contents_from(object, :index_name)
+            expect(child).to receive(:generate_document).with(for_index: :index_name, observer: observer)
+            contents = subject.extract_contents_from(object, :index_name, observer: observer)
             expect(contents).to have_key 'a'
+          end
+          it 'should add the nested object to the observer' do
+            allow(child).to receive(:generate_document).and_return true
+            expect(observer).to receive(:add).with(child)
+            subject.extract_contents_from(object, :index_name, observer: observer)
           end
         end
 
@@ -97,7 +103,7 @@ describe AgnosticBackend::Indexable::ContentManager do
             allow(child).to receive(:respond_to?).with(:generate_document).and_return(false)
           end
           it 'should not include the nested field (struct) in the extracted contents' do
-            contents = subject.extract_contents_from(object, :index_name)
+            contents = subject.extract_contents_from(object, :index_name, observer: observer)
             expect(contents).not_to have_key 'a'
           end
         end
@@ -106,7 +112,7 @@ describe AgnosticBackend::Indexable::ContentManager do
       context 'when value is nil' do
         before { allow(object).to receive(:a) }
         it 'should return nil' do
-          contents = subject.extract_contents_from(object, :index_name)
+          contents = subject.extract_contents_from(object, :index_name, observer: observer)
           expect(contents).to have_key 'a'
           expect(contents['a']).to be_nil
         end

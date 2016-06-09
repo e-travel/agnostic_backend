@@ -88,12 +88,13 @@ module AgnosticBackend
         self.class.index_name(source)
       end
 
-      def generate_document(for_index: nil)
+      def generate_document(for_index: nil, observer: nil)
         index_name = for_index.nil? ? self.index_name : for_index.to_s
         return unless respond_to? :_index_content_managers
         manager = _index_content_managers[index_name.to_s]
         raise "Index #{index_name} does not exist" if manager.nil?
-        manager.extract_contents_from self, index_name
+        observer ||= AgnosticBackend::Indexable::ObjectObserver.new
+        manager.extract_contents_from self, index_name, observer: observer
       end
 
       def put_to_index(index_name=nil)

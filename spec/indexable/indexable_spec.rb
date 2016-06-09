@@ -199,7 +199,8 @@ describe AgnosticBackend::Indexable do
               expect(subject).to receive(:a)
               expect(subject).to receive(:b)
               expect(subject).to receive(:a_message)
-              expect { managers['indexable_objects'].extract_contents_from(subject, :index_name) }.
+              expect { managers['indexable_objects'].extract_contents_from(subject, :index_name,
+                                                                           observer: []) }.
                   to_not raise_error
             end
             it 'should be able to add an additional index manager to the hash' do
@@ -295,6 +296,21 @@ describe AgnosticBackend::Indexable do
             expect(subject.generate_document(for_index: 'indexable_objects')).
                 to eq({'a' => 'Hello', 'b' => 'Goodbye', 'c' => 'A Message'})
           end
+
+          context 'when observer: is not specified' do
+            it 'should create a new observer' do
+              expect(AgnosticBackend::Indexable::ObjectObserver).to receive(:new).and_call_original
+              subject.generate_document
+            end
+          end
+
+          context 'when observer: is specified' do
+            it 'should use the supplied observer' do
+              expect(AgnosticBackend::Indexable::ObjectObserver).not_to receive(:new)
+              subject.generate_document(observer: [])
+            end
+          end
+
         end
       end
 

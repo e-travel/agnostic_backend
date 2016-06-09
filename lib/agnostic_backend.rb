@@ -8,6 +8,7 @@ require 'agnostic_backend/indexable/config'
 require 'agnostic_backend/indexable/field_type'
 require 'agnostic_backend/indexable/field'
 require 'agnostic_backend/indexable/content_manager'
+require 'agnostic_backend/indexable/object_observer'
 
 require 'agnostic_backend/index'
 require 'agnostic_backend/indexer'

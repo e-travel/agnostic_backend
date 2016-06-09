@@ -30,12 +30,13 @@ module AgnosticBackend
                                               from: from, **options)
       end
 
-      def extract_contents_from(object, index_name)
+      def extract_contents_from(object, index_name, observer:)
         kv_pairs = contents.map do |field_name, field|
           field_value = field.evaluate(context: object)
           if field.type.nested?
             if field_value.respond_to? :generate_document
-              field_value = field_value.generate_document(for_index: index_name)
+              observer.add(field_value)
+              field_value = field_value.generate_document(for_index: index_name, observer: observer)
             elsif field_value.present?
               field_name = nil
             end
