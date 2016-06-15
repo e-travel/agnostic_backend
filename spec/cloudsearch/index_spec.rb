@@ -20,18 +20,16 @@ describe AgnosticBackend::Cloudsearch::Index do
     IndexableObject.send(:include, AgnosticBackend::Indexable)
     IndexableObject.define_index_fields &field_block
 
-    if AgnosticBackend::Indexable::Config.indices[IndexableObject.name].nil?
-      AgnosticBackend::Indexable::Config.configure_index(
-        IndexableObject,
-        AgnosticBackend::Cloudsearch::Index,
-        access_key_id: 'the_access_key_id',
-        secret_access_key: 'the_secret_access_key',
-        region: 'the_region',
-        domain_name: 'the_domain_name',
-        document_endpoint: 'the_document_endpoint',
-        search_endpoint: 'the_search_endpoint'
-      )
-    end
+    AgnosticBackend::Indexable::Config.configure_index(
+      IndexableObject,
+      AgnosticBackend::Cloudsearch::Index,
+      access_key_id: 'the_access_key_id',
+      secret_access_key: 'the_secret_access_key',
+      region: 'the_region',
+      domain_name: 'the_domain_name',
+      document_endpoint: 'the_document_endpoint',
+      search_endpoint: 'the_search_endpoint'
+    )
   end
 
   subject { IndexableObject.create_index }
@@ -177,25 +175,6 @@ describe AgnosticBackend::Cloudsearch::Index do
       expect(fields.first.type).to eq :integer
       expect(fields.last.name).to eq 'beta'
       expect(fields.last.type).to eq :string
-    end
-  end
-
-  describe '#parse_option' do
-    let(:options) { { a: 1 } }
-    context 'when option_name is included in options as a key' do
-      it 'should return its value' do
-        expect(subject.send(:parse_option, options, :a)).to eq 1
-      end
-    end
-    context 'when option_name is not included in options as a key' do
-      it 'should raise an Exception' do
-        expect{subject.send(:parse_option, options, :b)}.to raise_error "b must be specified"
-      end
-    end
-    context 'when option is optional and does not exist in options' do
-      it 'should return the default value' do
-        expect(subject.send(:parse_option, options, :b, optional: true, default: 2)).to eq 2
-      end
     end
   end
 

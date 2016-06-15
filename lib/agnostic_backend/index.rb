@@ -1,8 +1,17 @@
 module AgnosticBackend
   class Index
 
-    def initialize(indexable_klass)
+    attr_reader :options
+
+    def initialize(indexable_klass, primary: true, **options)
       @indexable_klass = indexable_klass
+      @primary = primary
+      @options = options
+      parse_options
+    end
+
+    def primary?
+      @primary
     end
 
     def name
@@ -21,7 +30,11 @@ module AgnosticBackend
       raise NotImplementedError
     end
 
-    def parse_option(options, option_name, optional: false, default: nil)
+    def parse_options
+      raise NotImplementedError
+    end
+
+    def parse_option(option_name, optional: false, default: nil)
       if options.has_key?(option_name)
         options[option_name]
       elsif optional

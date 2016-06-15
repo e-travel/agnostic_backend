@@ -9,16 +9,6 @@ module AgnosticBackend
                   :access_key_id,
                   :secret_access_key
 
-      def initialize(indexable_klass, **options)
-        super(indexable_klass)
-        @region = parse_option(options, :region)
-        @domain_name = parse_option(options, :domain_name)
-        @document_endpoint = parse_option(options, :document_endpoint)
-        @search_endpoint = parse_option(options, :search_endpoint)
-        @access_key_id = parse_option(options, :access_key_id)
-        @secret_access_key = parse_option(options, :secret_access_key)
-      end
-
       def indexer
         AgnosticBackend::Cloudsearch::Indexer.new(self)
       end
@@ -86,6 +76,16 @@ module AgnosticBackend
           AgnosticBackend::Cloudsearch::IndexField.new(field_name, field_type)
         end
       end
+
+      def parse_options
+        @region = parse_option(:region)
+        @domain_name = parse_option(:domain_name)
+        @document_endpoint = parse_option(:document_endpoint)
+        @search_endpoint = parse_option(:search_endpoint)
+        @access_key_id = parse_option(:access_key_id)
+        @secret_access_key = parse_option(:secret_access_key)
+      end
+
     end
   end
 end

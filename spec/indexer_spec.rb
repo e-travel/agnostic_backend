@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe AgnosticBackend::Indexer do
 
+  before { allow_any_instance_of(AgnosticBackend::Index).to receive(:parse_options) }
+
   subject do
     index_class = Class.new
     index = AgnosticBackend::Index.new(index_class)

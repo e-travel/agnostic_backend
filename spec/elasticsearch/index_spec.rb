@@ -20,14 +20,12 @@ describe AgnosticBackend::Elasticsearch::Index do
     ESIndexableObject.send(:include, AgnosticBackend::Indexable)
     ESIndexableObject.define_index_fields &field_block
 
-    if AgnosticBackend::Indexable::Config.indices[ESIndexableObject.name].nil?
-      AgnosticBackend::Indexable::Config.configure_index(
-        ESIndexableObject,
-        AgnosticBackend::Elasticsearch::Index,
-        endpoint: 'http://localhost:9200',
-        index_name: 'index',
-        type: 'type')
-    end
+    AgnosticBackend::Indexable::Config.configure_index(
+      ESIndexableObject,
+      AgnosticBackend::Elasticsearch::Index,
+      endpoint: 'http://localhost:9200',
+      index_name: 'index',
+      type: 'type')
   end
 
   let(:es_mappings) {
@@ -48,6 +46,12 @@ describe AgnosticBackend::Elasticsearch::Index do
 
   it { should be_a AgnosticBackend::Index }
   it { should be_a AgnosticBackend::Elasticsearch::Index }
+
+  describe '#initialize' do
+    it { expect(subject.endpoint).to eq 'http://localhost:9200' }
+    it { expect(subject.index_name).to eq 'index' }
+    it { expect(subject.type).to eq 'type' }
+  end
 
   describe "#indexer" do
     it { expect(subject.indexer).to be_a AgnosticBackend::Indexer }

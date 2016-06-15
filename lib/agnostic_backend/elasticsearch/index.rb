@@ -7,14 +7,6 @@ module AgnosticBackend
                   :endpoint,
                   :enable_all
 
-      def initialize(indexable_klass, **options)
-        super(indexable_klass)
-        @index_name = parse_option(options, :index_name)
-        @type = parse_option(options, :type)
-        @endpoint = parse_option(options, :endpoint)
-        @enable_all = parse_option(options, :enable_all, optional: true, default: false)
-      end
-
       def indexer
         AgnosticBackend::Elasticsearch::Indexer.new(self)
       end
@@ -62,6 +54,13 @@ module AgnosticBackend
         flat_schema.map do |field_name, field_type|
           AgnosticBackend::Elasticsearch::IndexField.new(field_name, field_type)
         end
+      end
+
+      def parse_options
+        @index_name = parse_option(:index_name)
+        @type = parse_option(:type)
+        @endpoint = parse_option(:endpoint)
+        @enable_all = parse_option(:enable_all, optional: true, default: false)
       end
     end
   end
