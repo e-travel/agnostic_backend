@@ -3,6 +3,12 @@ module AgnosticBackend
     class Indexer < AgnosticBackend::Indexer
       include AgnosticBackend::Utilities
 
+      private
+
+      def client
+        index.client
+      end
+
       def publish(document)
         client.send_request(:put,
                             path: "/#{index.index_name}/#{index.type}/#{document["id"]}",
@@ -10,19 +16,16 @@ module AgnosticBackend
       end
 
       def publish_all(documents)
+        return if documents.empty?
         response = client.send_request(:post,
                                        path: "/#{index.index_name}/#{index.type}/_bulk",
                                        body: convert_to_bulk_upload_string(documents))
         body = ActiveSupport::JSON.decode(response.body) rescue {}
+        # if at least one indexing attempt fails, raise the red flag
         raise IndexingError.new, "Error in bulk upload" if body["errors"]
         response
       end
 
-      private
-
-      def client
-        index.client
-      end
 
       def prepare(document)
         raise IndexingError.new, "Document does not have an ID field" unless document["id"].present?
@@ -48,10 +51,11 @@ module AgnosticBackend
 
       def convert_to_bulk_upload_string(documents)
         documents.map do |document|
+          next if document.empty?
           header = { "index" => {"_id" => document["id"]}}.to_json
           document = ActiveSupport::JSON.encode transform(prepare(document))
           "#{header}\n#{document}\n"
-        end.join("\n")
+        end.compact.join("\n")
       end
     end
   end

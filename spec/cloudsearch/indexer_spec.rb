@@ -7,47 +7,59 @@ describe AgnosticBackend::Cloudsearch::Indexer do
 
   before { allow_any_instance_of(AgnosticBackend::Cloudsearch::Index).to receive(:parse_option) }
 
-  subject do
-    AgnosticBackend::Cloudsearch::Indexer.new(index)
-  end
+  subject { AgnosticBackend::Cloudsearch::Indexer.new(index) }
 
   it { expect(subject).to be_a_kind_of(AgnosticBackend::Indexer) }
 
   describe '#publish' do
-    let(:client) { double("CloudSearchClient") }
     let(:document) { double("Document") }
-    let(:response) { double("Response") }
+    it 'should forward to #publish_all and return its value' do
+      expect(subject).to receive(:publish_all).with([document]).and_return 'result'
+      expect(subject.send(:publish, document)).to eq 'result'
+    end
+  end
 
-    it "should use the aws gem to upload the documents" do
-      expect(client).to receive(:upload_documents).
-                         with(documents: document, content_type:'application/json').
-                         and_return(response)
+  describe '#publish_all' do
+    let(:client) { double("CloudSearchClient") }
+    let(:document) { {a: 1} }
+
+    it 'should do nothing if no documents are provided' do
+      expect(subject).not_to receive(:with_exponential_backoff)
+      expect(subject.send(:publish_all, [])).to be_nil
+    end
+
+    it 'should raise an error if the payload exceeds the cloudsearch limit' do
+      expect(subject).to receive(:payload_too_heavy?).and_return true
+      expect { subject.send(:publish_all, [document]) }.
+        to raise_error AgnosticBackend::Cloudsearch::PayloadLimitExceededError
+    end
+
+    it "should use the aws gem to upload the documents and return the response" do
       expect(subject).to receive(:client).and_return(client)
-
-      subject.publish(document)
+      expect(subject).to receive(:with_exponential_backoff).and_call_original
+      expect(client).to receive(:upload_documents).
+                         with(documents: ActiveSupport::JSON.encode([document]),
+                              content_type:'application/json').
+                         and_return('result')
+      expect(subject.send(:publish_all, [document])).to eq 'result'
     end
-
-    it 'should handle the response' do
-      allow(subject).to receive(:client).and_return(client)
-      allow(client).to receive(:upload_documents).and_return(response)
-      expect(subject.publish(document)).to eq response
-    end
-
   end
 
   describe "#delete" do
-    let(:client) { double("CloudSearchClient") }
-    let(:document_ids) { [1, 2] }
-    let(:response) { double("Response") }
-    let(:document) { "[{\"type\":\"delete\",\"id\":[1,2]}]" }
+    let(:document_id) { 1 }
+    it 'should forward to #delete_all and return its value' do
+      expect(subject).to receive(:delete_all).with([document_id]).and_return 'result'
+      expect(subject.delete(document_id)).to eq 'result'
+    end
+  end
 
-    it "should use the aws gem to upload the documents" do
-      expect(client).to receive(:upload_documents).
-                            with(documents: document, content_type:'application/json').
-                            and_return(response)
-      expect(subject).to receive(:client).and_return(client)
-
-      subject.delete(document_ids)
+  describe "#delete_all" do
+    it 'forward to #publish_all and return its value' do
+      expect(subject).
+        to receive(:publish_all).
+            with([{'type'=>'delete', 'id'=>1},{'type'=>'delete', 'id'=>2}]).
+            and_return 'result'
+      expect(subject.delete_all([1,2])).to eq 'result'
     end
   end
 
@@ -63,6 +75,11 @@ describe AgnosticBackend::Cloudsearch::Indexer do
   describe '#prepare' do
     let(:document) { {"id" => 1} }
     it { expect(subject.send(:prepare, document)).to eq document }
+
+    context 'when the document has no id field' do
+      let(:document) { {"a" => 1} }
+      it { expect {subject.send(:prepare, document)}.to raise_error(/Document does not have an ID field/)}
+    end
   end
 
   describe '#transform' do
@@ -102,21 +119,6 @@ describe AgnosticBackend::Cloudsearch::Indexer do
     it "should add metadata to document" do
       expect(subject).to receive(:add_metadata_to).and_call_original
       expect(subject.send(:transform, document))
-    end
-
-    it "should convert to json" do
-      expect(subject).to receive(:convert_to_json).and_call_original
-
-      expect(subject.send(:transform, document))
-    end
-
-    it "should return a json object" do
-      json_obj = ActiveSupport::JSON.encode([{id: "1", type: "some type"}])
-
-      expect(subject).to receive(:convert_to_json).and_return(json_obj)
-
-      result = subject.send(:transform, document)
-      expect(result).to eq(json_obj)
     end
   end
 
@@ -263,26 +265,21 @@ describe AgnosticBackend::Cloudsearch::Indexer do
     end
   end
 
-  describe "#convert_to_json" do
-    let(:transformed_document) do
-      {
-        "type" => "add",
-        "id" => "123456789",
-        "fields" => {
-          title: "The seeker: THe Dark is Rising",
-          gendres: ["Adventure","Drama","Fantasy","Thriller"],
-          is_published: "yes"
-        }
-      }
+  describe '#payload_too_heavy?' do
+    let(:payload) { 'a' * size }
+    context 'when payload is larger than the hardcoded value' do
+      let(:size) { AgnosticBackend::Cloudsearch::Indexer::MAX_PAYLOAD_SIZE_IN_BYTES + 1 }
+      it { expect(subject.send(:payload_too_heavy?, payload)).to be true }
+    end
+    context 'when payload is less than the hardcoded value' do
+      let(:size) { AgnosticBackend::Cloudsearch::Indexer::MAX_PAYLOAD_SIZE_IN_BYTES - 1 }
+      it { expect(subject.send(:payload_too_heavy?, payload)).to be false }
+    end
+    context 'when payload is equal the hardcoded value' do
+      let(:size) { AgnosticBackend::Cloudsearch::Indexer::MAX_PAYLOAD_SIZE_IN_BYTES }
+      it { expect(subject.send(:payload_too_heavy?, payload)).to be false }
     end
 
-    it "should return an array json object" do
-      result = subject.send(:convert_to_json, transformed_document)
-
-      expect(result).to eq(
-                          "{\"type\":\"add\",\"id\":\"123456789\",\"fields\":{\"title\":\"The seeker: THe Dark is Rising\",\"gendres\":[\"Adventure\",\"Drama\",\"Fantasy\",\"Thriller\"],\"is_published\":\"yes\"}}"
-                        )
-    end
   end
 
 end

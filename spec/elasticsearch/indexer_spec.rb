@@ -56,7 +56,7 @@ describe AgnosticBackend::Elasticsearch::Indexer do
       expect(client).to receive(:send_request).with(:put,
                                                     path: "/index/type/1",
                                                     body: document)
-      subject.publish(document)
+      subject.send(:publish, document)
     end
   end
 
@@ -75,7 +75,7 @@ describe AgnosticBackend::Elasticsearch::Indexer do
     it 'should convert the data to a string' do
       allow(client).to receive(:send_request)
       expect(subject).to receive(:convert_to_bulk_upload_string).with([document, other_document])
-      subject.publish_all [document, other_document]
+      subject.send(:publish_all, [document, other_document])
     end
 
     it 'should make an appopriate request to ES' do
@@ -83,7 +83,7 @@ describe AgnosticBackend::Elasticsearch::Indexer do
       expect(client).to receive(:send_request).with(:post,
                                                     path: "/index/type/_bulk",
                                                     body: 'hello')
-      subject.publish_all [document]
+      subject.send(:publish_all, [document])
     end
 
     it 'should raise an error if at least one of the docs fails to be indexed' do
@@ -93,7 +93,7 @@ describe AgnosticBackend::Elasticsearch::Indexer do
                                                     path: "/index/type/_bulk",
                                                     body: 'hello').
                          and_return response
-      expect { subject.publish_all [document] }.to raise_error AgnosticBackend::IndexingError
+      expect { subject.send(:publish_all, [document]) }.to raise_error AgnosticBackend::IndexingError
     end
   end
 
