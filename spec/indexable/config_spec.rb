@@ -85,22 +85,37 @@ describe AgnosticBackend::Indexable::Config do
   end
 
   describe '.create_indices_for' do
+    let(:entries) { subject.indices[indexable_class.name] }
+    let(:primary_index) { double("PrimaryIndex") }
+    let(:secondary_index) { double("SecondaryIndex") }
+
     before do
       subject.configure_index(indexable_class, index_class)
       subject.configure_secondary_index(indexable_class,
                                         secondary_index_class,
                                         **secondary_index_options)
+      allow(primary_index).to receive(:primary?).and_return true
+      allow(secondary_index).to receive(:primary?).and_return false
+
+      expect(entries.first).to receive(:create_index).and_return primary_index
+      expect(entries.last).to receive(:create_index).and_return secondary_index
     end
 
-    let(:entries) { subject.indices[indexable_class.name] }
+    context 'when include_primary is false' do
+      it 'should return an array of indices that does not include the primary index' do
+        indices = subject.create_indices_for(indexable_class, include_primary: false)
+        expect(indices.length).to eq 1
+        expect(indices.first).to eq secondary_index
+      end
+    end
 
-    it 'should return an array of indices' do
-      expect(entries.first).to receive(:create_index).and_return 'Index1'
-      expect(entries.last).to receive(:create_index).and_return 'Index2'
-      indices = subject.create_indices_for(indexable_class)
-      expect(indices.length).to eq 2
-      expect(indices.first).to eq 'Index1'
-      expect(indices.last).to eq 'Index2'
+    context 'when include_primary is true' do
+      it 'should return an array of indices that includes the primary index' do
+        indices = subject.create_indices_for(indexable_class)
+        expect(indices.length).to eq 2
+        expect(indices.first).to eq primary_index
+        expect(indices.last).to eq secondary_index
+      end
     end
   end
 end

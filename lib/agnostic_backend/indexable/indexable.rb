@@ -22,8 +22,9 @@ module AgnosticBackend
         AgnosticBackend::Indexable::Config.create_index_for(self)
       end
 
-      def create_indices
-        AgnosticBackend::Indexable::Config.create_indices_for(self)
+      def create_indices(include_primary: true)
+        AgnosticBackend::Indexable::Config.create_indices_for(self,
+                                                              include_primary: include_primary)
       end
 
       # establishes the convention for determining the index name from the class name

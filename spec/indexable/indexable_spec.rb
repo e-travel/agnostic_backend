@@ -69,9 +69,9 @@ describe AgnosticBackend::Indexable do
         it 'should use the Config object to create an array of indices' do
           expect(AgnosticBackend::Indexable::Config).
               to receive(:create_indices_for).
-                     with(IndexableObject).
+                     with(IndexableObject, {include_primary: 'Hey'}).
                      and_return [index]
-          expect(IndexableObject.create_indices).to eq [index]
+          expect(IndexableObject.create_indices(include_primary: 'Hey')).to eq [index]
         end
       end
 

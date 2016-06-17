@@ -51,8 +51,9 @@ module AgnosticBackend
         entry.try(:create_index)
       end
 
-      def self.create_indices_for(indexable_class)
-        indices[indexable_class.name].map {|entry| entry.try(:create_index)}.compact
+      def self.create_indices_for(indexable_class, include_primary: true)
+        all = indices[indexable_class.name].map {|entry| entry.try(:create_index)}.compact
+        include_primary ? all : all.reject(&:primary?)
       end
 
     end
