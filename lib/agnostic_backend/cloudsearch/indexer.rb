@@ -2,44 +2,50 @@ require 'aws-sdk'
 
 module AgnosticBackend
   module Cloudsearch
+
+    class PayloadLimitExceededError < StandardError ; end
+
     class Indexer < AgnosticBackend::Indexer
       include AgnosticBackend::Utilities
 
-      def initialize(index)
-        @index = index
+      MAX_PAYLOAD_SIZE_IN_BYTES = 4_500_000
+
+      def delete(document_id)
+        delete_all([document_id])
       end
 
-      def publish(document)
-        with_exponential_backoff Aws::CloudSearch::Errors::Throttling do
-          client.upload_documents(
-            documents: document,
-            content_type:'application/json'
-          )
-        end
-      end
-
-      def delete(*document_ids)
+      def delete_all(document_ids)
         documents = document_ids.map do |document_id|
           {"type" => 'delete',
            "id" => document_id}
         end
-
-        with_exponential_backoff Aws::CloudSearch::Errors::Throttling do
-          client.upload_documents(
-            documents: convert_to_json(documents),
-            content_type:'application/json'
-
-          )
-        end
+        publish_all(documents)
       end
 
       private
+
+      def publish(document)
+        publish_all([document])
+      end
+
+      def publish_all(documents)
+        return if documents.empty?
+        payload = ActiveSupport::JSON.encode(documents)
+        raise PayloadLimitExceededError.new if payload_too_heavy? payload
+        with_exponential_backoff Aws::CloudSearch::Errors::Throttling do
+          client.upload_documents(
+            documents: payload,
+            content_type:'application/json'
+          )
+        end
+      end
 
       def client
         index.cloudsearch_domain_client
       end
 
       def prepare(document)
+        raise IndexingError.new "Document does not have an ID field" unless document["id"].present?
         document
       end
 
@@ -51,8 +57,7 @@ module AgnosticBackend
         document = convert_bool_values_to_string_in document
         document = date_format document
         document = add_metadata_to document
-        document = convert_document_into_array(document)
-        convert_to_json document
+        document
 
       end
 
@@ -72,13 +77,10 @@ module AgnosticBackend
         }
       end
 
-      def convert_to_json(transformed_document)
-        ActiveSupport::JSON.encode(transformed_document)
+      def payload_too_heavy?(payload)
+        payload.bytesize > MAX_PAYLOAD_SIZE_IN_BYTES
       end
 
-      def convert_document_into_array(document)
-        [document]
-      end
     end
   end
 end

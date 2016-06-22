@@ -22,6 +22,11 @@ module AgnosticBackend
         AgnosticBackend::Indexable::Config.create_index_for(self)
       end
 
+      def create_indices(include_primary: true)
+        AgnosticBackend::Indexable::Config.create_indices_for(self,
+                                                              include_primary: include_primary)
+      end
+
       # establishes the convention for determining the index name from the class name
       def index_name(source=nil)
         (source.nil? ? name : source.to_s).split('::').last.underscore.pluralize
@@ -102,9 +107,10 @@ module AgnosticBackend
                             self.class :
                             AgnosticBackend::Indexable.indexable_class(index_name)
 
-        index = indexable_class.create_index
-        indexer = index.indexer
-        indexer.put(self)
+        indexable_class.create_indices.map do |index|
+          indexer = index.indexer
+          indexer.put(self)
+        end
       end
 
       def index_object(index_name)

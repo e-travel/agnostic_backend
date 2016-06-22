@@ -1,4 +1,5 @@
 require 'agnostic_backend/version'
+require 'active_support'
 require 'active_support/core_ext'
 
 require 'agnostic_backend/utilities'
@@ -44,6 +45,9 @@ require 'agnostic_backend/cloudsearch/index'
 require 'agnostic_backend/cloudsearch/index_field'
 require 'agnostic_backend/cloudsearch/indexer'
 require 'agnostic_backend/cloudsearch/remote_index_field'
+
+Dir[File.dirname(__FILE__) + '/agnostic_backend/elasticsearch/*.rb'].each {|file| require file }
+Dir[File.dirname(__FILE__) + '/agnostic_backend/queryable/elasticsearch/*.rb'].each {|file| require file }
 
 module AgnosticBackend
 

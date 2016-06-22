@@ -8,3 +8,4 @@ script: bundle exec rspec spec
 branches:
   only:
     - master
+    - lp/elasticsearch

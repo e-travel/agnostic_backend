@@ -63,7 +63,6 @@ module AgnosticBackend
       def define_index_field(*args)
         DefineIndexField.new(*args)
       end
-
     end
   end
 end

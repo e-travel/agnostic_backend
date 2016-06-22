@@ -64,6 +64,17 @@ describe AgnosticBackend::Indexable do
         end
       end
 
+      describe '.create_indices' do
+        let(:index) { double('Index') }
+        it 'should use the Config object to create an array of indices' do
+          expect(AgnosticBackend::Indexable::Config).
+              to receive(:create_indices_for).
+                     with(IndexableObject, {include_primary: 'Hey'}).
+                     and_return [index]
+          expect(IndexableObject.create_indices(include_primary: 'Hey')).to eq [index]
+        end
+      end
+
       describe '.index_name' do
         context 'when source is nil' do
           it 'should transform self\'s name' do
@@ -319,26 +330,27 @@ describe AgnosticBackend::Indexable do
         let(:index) { AgnosticBackend::Index.new(klass) }
 
         before do
-          expect(index).to receive(:indexer).and_return(indexer)
-          expect(klass).to receive(:create_index).and_return(index)
-          expect(indexer).to receive(:put).with(subject).and_return('Result')
+          allow_any_instance_of(AgnosticBackend::Index).to receive(:parse_options)
+          expect(index).to receive(:indexer).twice.and_return(indexer)
+          expect(klass).to receive(:create_indices).and_return([index, index])
+          expect(indexer).to receive(:put).twice.with(subject).and_return('Result')
         end
 
         context 'when the index_name is specified' do
           let(:klass) { double("AnotherIndexableObject") }
-          it 'should index itself in the requested index' do
+          it 'should index itself in all requested index' do
             expect(AgnosticBackend::Indexable).
               to receive(:indexable_class).
                   with("index_name").
                   and_return klass
-            expect(subject.put_to_index('index_name')).to eq 'Result'
+            expect(subject.put_to_index('index_name')).to eq ['Result', 'Result']
           end
         end
 
         context 'when the index_name is nil' do
           let(:klass) { subject.class}
           it 'should index itself in the default index' do
-            expect(subject.put_to_index).to eq 'Result'
+            expect(subject.put_to_index).to eq ['Result', 'Result']
           end
         end
       end
