@@ -9,17 +9,16 @@ Version](https://badge.fury.io/rb/agnostic_backend.svg)](https://badge.fury.io/r
 `agnostic_backend` is a gem that adds indexing and searching
 capabilities to Ruby objects for various backends.
 
-It includes two modules: `Indexable` and `Queryable`.
-`Indexable` provides indexing functionality by
-specifying a way to define which object attributes should be
-transformed in order to be eventually indexed to a remote backend
-store. `Queryable` provides search and retrieval functionality by
-specifying a generic query language that seamlessly maps to specific
-backend languages.
+It includes two modules: `Indexable` and `Queryable`.  `Indexable`
+provides indexing functionality by specifying a way to define which
+object attributes should be transformed in order to be eventually
+indexed to a remote backend store. `Queryable` provides search and
+retrieval functionality by specifying a generic query language that
+seamlessly maps to specific backend languages.
 
 In addition to these two modules, `agnostic_backend` supplies
-additional classes (`Indexer` and `Index`) to support
-configuration and transformation functionality for remote backends (such as
+additional classes (`Indexer` and `Index`) to support configuration
+and transformation functionality for remote backends (such as
 Elasticsearch, AWS Cloudsearch etc).
 
 Although the motivation and use case for the gem relates to
@@ -28,9 +27,17 @@ which `Indexable` and `Queryable` can be included. The objective is to
 maximize the flexibility of clients with respect to the use cases they
 need to address.
 
-## Supported backends
+## Supported Backends
+
+`agnostic_backend` currently includes implementations for the
+following backends:
 
 * [AWS Cloudsearch](https://aws.amazon.com/cloudsearch/)
+* [elasticsearch](https://www.elastic.co/products/elasticsearch) [experimental]
+
+The gem also supports the indexing of a document to multiple backends
+(multicast indexing) in a seamless manner, namely by means of extra
+configuration (rather than extra code) from the client's part.
 
 ## Installation
 
@@ -261,10 +268,13 @@ For more information about `Queryable` check out
 
 ### Backends
 
-Currently, the gem includes one concrete backend implementation that
-talks to [AWS Cloudsearch](https://aws.amazon.com/cloudsearch/). New
-backends can be implemented by subclassing `AgnosticBackend::Index`
-and `AgnosticBackend::Indexer` (more on that later).
+Currently, the gem includes two concrete backend implementations: one
+that talks to [AWS Cloudsearch](https://aws.amazon.com/cloudsearch/)
+and one that talks to [elasticsearch](https://www.elastic.co/products/elasticsearch).
+
+New backends can be implemented by subclassing
+`AgnosticBackend::Index` and `AgnosticBackend::Indexer` (more on that
+later).
 
 #### The Index
 
