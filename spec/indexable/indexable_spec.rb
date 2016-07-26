@@ -19,12 +19,13 @@ describe AgnosticBackend::Indexable do
     subject { IndexableObject.new }
 
     describe '.includers' do
-      it { expect(AgnosticBackend::Indexable.includers).to include IndexableObject }
+      it { expect(AgnosticBackend::Indexable.includers.map(&:name)).to include "IndexableObject" }
 
       context 'when the same class includes Indexable twice' do
         before { IndexableObject.send(:include, AgnosticBackend::Indexable) }
         it 'should appear once in the includers array' do
-          expect(AgnosticBackend::Indexable.includers.count{|klass| klass == IndexableObject}).to eq 1
+          expect(AgnosticBackend::Indexable.includers.count{|klass| klass.name == "IndexableObject"}).
+            to eq 1
         end
       end
     end
@@ -192,11 +193,8 @@ describe AgnosticBackend::Indexable do
         context 'when a block is supplied' do
           before do
             expect(subject).not_to respond_to :_index_content_managers
-            expect(IndexableObject).to receive(:define_method).and_call_original
             IndexableObject.define_index_fields &field_block
           end
-
-          it { expect(subject).to respond_to :_index_content_managers }
 
           describe '#_index_content_managers' do
             it 'should return a Hash with the content managers (coming from its class)' do
@@ -212,7 +210,7 @@ describe AgnosticBackend::Indexable do
               expect(subject).to receive(:a_message)
               expect { managers['indexable_objects'].extract_contents_from(subject, :index_name,
                                                                            observer: []) }.
-                  to_not raise_error
+                to_not raise_error
             end
             it 'should be able to add an additional index manager to the hash' do
               IndexableObject.define_index_fields(owner: 'test', &field_block)

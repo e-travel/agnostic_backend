@@ -11,7 +11,7 @@ module AgnosticBackend
 
     def self.included(base)
       @includers ||= []
-      @includers << base unless @includers.include? base
+      @includers << base if @includers.none?{|klass| klass.name == base.name}
       base.send :include, InstanceMethods
       base.send :extend, ClassMethods
     end
