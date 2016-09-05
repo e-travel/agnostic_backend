@@ -59,6 +59,13 @@ describe AgnosticBackend::Queryable::Criteria::Binary do
       end
     end
 
+    context 'FreeText Criterion' do
+      let(:equal_criterion) { AgnosticBackend::Queryable::Criteria::FreeText.new(attribute: attribute, value: value, context: context) }
+      it 'should inherit from Relational criterion' do
+        expect(equal_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
+      end
+    end
+
     context 'NotEqual Criterion' do
       let(:not_equal_criterion) { AgnosticBackend::Queryable::Criteria::NotEqual.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do

@@ -79,6 +79,11 @@ module AgnosticBackend
         visit(subject.right_value)
       end
 
+      def visit_criteria_free_text(subject)
+        visit(subject.attribute)
+        visit(subject.value)
+      end
+
       def visit_operations_not(subject)
         visit(subject.operand)
       end
@@ -124,7 +129,7 @@ module AgnosticBackend
       end
 
       def visit_attribute(subject)
-        if value_for_key(subject.context.index.schema, subject.name).nil?
+        if value_for_key(subject.context.index.schema, subject.name).nil? && !subject.any?
           subject.context.query.errors[subject.class.name] << attribute_error(subject)
           @valid = false
         end

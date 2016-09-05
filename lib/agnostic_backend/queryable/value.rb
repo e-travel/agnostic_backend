@@ -19,6 +19,7 @@ module AgnosticBackend
       end
 
       def type
+        return :text if associated_attribute.try(:any?)
         associated_attribute.type if associated_attribute.present?
       end
     end

@@ -22,6 +22,22 @@ describe AgnosticBackend::Queryable::Attribute do
       end
     end
 
+    describe '#any?' do
+      context 'given an attribute with `*` name' do
+        subject { AgnosticBackend::Queryable::Attribute.new('*', parent: parent, context: context) }
+
+          it 'should return true' do
+          expect(subject).to be_any
+        end
+      end
+
+      context 'given an attribute with not `*` name' do
+        it 'should return false' do
+          expect(subject).not_to be_any
+        end
+      end
+    end
+
     describe '#==' do
       context 'given two attribute objects' do
         it 'should be equal if attribute names are equal' do

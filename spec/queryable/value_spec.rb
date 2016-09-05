@@ -72,19 +72,28 @@ describe AgnosticBackend::Queryable::Value do
       it 'should return attribute type if associated attribute is defined in schema' do
         index = double('Index', schema: {'foo' => double('FieldType', type: :integer)})
         context = double('Context', index: index)
-        attribute = double('Attribute', name: 'foo', type: :integer)
+        attribute = double('Attribute', name: 'foo', type: :integer, any?: false)
 
-        expect(subject).to receive(:associated_attribute).twice.and_return attribute
+        expect(subject).to receive(:associated_attribute).exactly(3).times.and_return attribute
         expect(subject.type).to eq :integer
       end
 
       it 'should return attribute if associated attribute is defined in schema as association' do
         index = double('Index', schema: {'foo' => {'bar' => {'baz' => double('FieldType', type: :integer)}}})
         context = double('Context', index: index)
-        attribute = double('Attribute', name: 'foo.bar.baz', type: :integer)
+        attribute = double('Attribute', name: 'foo.bar.baz', type: :integer, any?: false)
 
-        expect(subject).to receive(:associated_attribute).twice.and_return attribute
+        expect(subject).to receive(:associated_attribute).exactly(3).times.and_return attribute
         expect(subject.type).to eq :integer
+      end
+
+      it 'should return text if associated attribute is any?' do
+        index = double('Index', schema: {'foo' => {'bar' => {'baz' => double('FieldType', type: :integer)}}})
+        context = double('Context', index: index)
+        attribute = double('Attribute', name: 'foo.bar.baz', type: :integer, any?: true)
+
+        expect(subject).to receive(:associated_attribute).once.and_return attribute
+        expect(subject.type).to eq :text
       end
     end
   end
