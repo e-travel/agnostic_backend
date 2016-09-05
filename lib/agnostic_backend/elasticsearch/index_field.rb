@@ -6,6 +6,7 @@ module AgnosticBackend
         AgnosticBackend::Indexable::FieldType::STRING => "string",
         AgnosticBackend::Indexable::FieldType::STRING_ARRAY => "string",
         AgnosticBackend::Indexable::FieldType::DATE => "date",
+        AgnosticBackend::Indexable::FieldType::DATE_ARRAY => "date",
         AgnosticBackend::Indexable::FieldType::INTEGER => "integer",
         AgnosticBackend::Indexable::FieldType::DOUBLE => "double",
         AgnosticBackend::Indexable::FieldType::BOOLEAN => "boolean",

@@ -53,6 +53,14 @@ module AgnosticBackend
           "(prefix field=#{visit(subject.attribute)} #{visit(subject.value)})"
         end
 
+        def visit_criteria_free_text(subject)
+          if subject.attribute.any?
+            "(and #{visit(subject.value)})"
+          else
+            "(and #{visit(subject.attribute)}: #{visit(subject.value)})"
+          end
+        end
+
         def visit_operations_not(subject)
           "(not #{visit(subject.operand)})"
         end
@@ -109,7 +117,7 @@ module AgnosticBackend
           case subject.type
           when :integer
             subject.value
-          when :date
+          when :date,:date_array
             "'#{subject.value.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}'"
           when :double
             subject.value

@@ -11,9 +11,10 @@ describe AgnosticBackend::Indexable::FieldType do
     it { expect(subject.all).to include :text }
     it { expect(subject.all).to include :text_array }
     it { expect(subject.all).to include :date }
+    it { expect(subject.all).to include :date_array }
     it { expect(subject.all).to include :boolean }
     it { expect(subject.all).to include :struct }
-    it { expect(subject.all.size).to eq 9 }
+    it { expect(subject.all.size).to eq 10 }
   end
 
   describe '.exists?' do
