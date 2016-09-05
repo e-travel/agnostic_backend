@@ -65,6 +65,8 @@ module AgnosticBackend
         document.each do |k, v|
           if v.is_a?(Time)
             document[k] = v.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+          elsif v.is_a?(Array) && v.all?{|e| e.is_a?(Time)}
+            document[k] = v.map{|e| e.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}
           end
         end
       end

@@ -8,6 +8,7 @@ module AgnosticBackend
       TEXT = :text
       TEXT_ARRAY = :text_array
       DATE = :date # datetime
+      DATE_ARRAY = :date_array # datetime
       BOOLEAN = :boolean
       STRUCT = :struct # a nested structure containing other values
 
