@@ -56,6 +56,10 @@ module AgnosticBackend
         Criteria::Starts.new(attribute: attribute, value: value, context: context)
       end
 
+      def free_text(attribute, value)
+        Criteria::FreeText.new(attribute: attribute, value: value, context: context)
+      end
+
       def asc(attribute)
         Operations::Ascending.new(attribute: attribute, context: context)
       end

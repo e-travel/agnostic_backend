@@ -42,6 +42,9 @@ module AgnosticBackend
 
       class Starts < Relational;
       end
+
+      class FreeText < Relational;
+      end
     end
   end
 end

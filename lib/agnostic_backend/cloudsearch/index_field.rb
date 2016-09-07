@@ -9,6 +9,7 @@ module AgnosticBackend
         AgnosticBackend::Indexable::FieldType::STRING => "literal",
         AgnosticBackend::Indexable::FieldType::STRING_ARRAY => "literal-array",
         AgnosticBackend::Indexable::FieldType::DATE => "date",
+        AgnosticBackend::Indexable::FieldType::DATE_ARRAY=> "date-array",
         AgnosticBackend::Indexable::FieldType::INTEGER => "int",
         AgnosticBackend::Indexable::FieldType::DOUBLE => "double",
         AgnosticBackend::Indexable::FieldType::BOOLEAN => "literal",

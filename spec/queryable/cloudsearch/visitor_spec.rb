@@ -22,6 +22,24 @@ describe AgnosticBackend::Queryable::Cloudsearch::Visitor do
       end
     end
 
+    describe '#visit_criteria_free_text' do
+      context 'when searching on specific attribute' do
+        let(:visitor_subject) { AgnosticBackend::Queryable::Criteria::FreeText.new(attribute: 'a_string', value: 'value', context: context)}
+        it 'should evaluate to (and attribute: value)' do
+          expect(subject).to receive(:visit_criteria_free_text).and_call_original
+          expect(subject.visit(visitor_subject)).to eq "(and a_string: 'value')"
+        end
+      end
+
+      context 'when searching on any attribute' do
+        let(:visitor_subject) { AgnosticBackend::Queryable::Criteria::FreeText.new(attribute: '*', value: 'value', context: context)}
+        it 'should evaluate to (and value)' do
+          expect(subject).to receive(:visit_criteria_free_text).and_call_original
+          expect(subject.visit(visitor_subject)).to eq "(and 'value')"
+        end
+      end
+    end
+
     describe '#visit_criteria_notequal' do
       let(:visitor_subject) { AgnosticBackend::Queryable::Criteria::NotEqual.new(attribute: 'a_string', value: 'value', context: context)}
       it 'should evaluate to (not term field=attribute value)' do

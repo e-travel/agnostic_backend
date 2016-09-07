@@ -142,7 +142,7 @@ module AgnosticBackend
           else
             value
           end
-        when :date
+        when :date, :date_array
           if value.is_a?(Time)
             value
           elsif is_date?(value)

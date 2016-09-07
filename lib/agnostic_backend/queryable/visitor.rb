@@ -56,6 +56,10 @@ module AgnosticBackend
         raise NotImplementedError
       end
 
+      def visit_criteria_free_text(subject)
+        raise NotImplementedError
+      end
+
       def visit_operations_not(subject)
         raise NotImplementedError
       end

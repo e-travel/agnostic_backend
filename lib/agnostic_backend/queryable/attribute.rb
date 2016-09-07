@@ -17,6 +17,10 @@ module AgnosticBackend
       def type
         value_for_key(context.index.schema, name).try(:type)
       end
+
+      def any?
+        @name == '*'
+      end
     end
   end
 end
