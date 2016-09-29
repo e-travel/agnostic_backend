@@ -84,6 +84,11 @@ module AgnosticBackend
         visit(subject.value)
       end
 
+      def visit_criteria_fuzzy(subject)
+        visit(subject.attribute)
+        visit(subject.value)
+      end
+
       def visit_operations_not(subject)
         visit(subject.operand)
       end

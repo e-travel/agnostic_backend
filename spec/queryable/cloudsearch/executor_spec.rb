@@ -87,8 +87,18 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
   end
 
   describe '#query_parser' do
-    it 'should return \'structured\'' do
-      expect(subject.send(:query_parser)).to eq 'structured'
+    context 'when visitor is SimpleVisitor' do
+      subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, AgnosticBackend::Queryable::Cloudsearch::SimpleVisitor.new)}
+      it 'should return \'simple\'' do
+        expect(subject.send(:query_parser)).to eq 'simple'
+      end
+    end
+
+    context 'when visitor is not SimpleVisitor' do
+      subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, AgnosticBackend::Queryable::Cloudsearch::Visitor.new)}
+      it 'should return \'structured\'' do
+        expect(subject.send(:query_parser)).to eq 'structured'
+      end
     end
   end
 

@@ -106,7 +106,7 @@ describe AgnosticBackend::Queryable::QueryBuilder do
     let(:query) { double('Query', children: [])}
 
     it 'should build query' do
-      expect(subject).to receive(:create_query).with(subject).and_return(query)
+      expect(subject).to receive(:create_query).with(subject, {}).and_return(query)
       expect(subject.build).to eq query
     end
 

@@ -60,6 +60,10 @@ module AgnosticBackend
         Criteria::FreeText.new(attribute: attribute, value: value, context: context)
       end
 
+      def fuzzy(attribute, value, fuzziness)
+        Criteria::Fuzzy.new(attribute: attribute, value: value, context: context, fuzziness: fuzziness)
+      end
+
       def asc(attribute)
         Operations::Ascending.new(attribute: attribute, context: context)
       end

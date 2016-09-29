@@ -45,6 +45,15 @@ module AgnosticBackend
 
       class FreeText < Relational;
       end
+
+      class Fuzzy < Relational
+        attr_reader :fuzziness
+
+        def initialize(attribute:, value:, context: nil, fuzziness: 1)
+          @fuzziness = fuzziness
+          super(attribute: attribute, value: value, context: context)
+        end
+      end
     end
   end
 end

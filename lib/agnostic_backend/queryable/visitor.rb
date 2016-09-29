@@ -1,5 +1,8 @@
 module AgnosticBackend
   module Queryable
+    class UnsupportedNodeError < StandardError; end
+    class UnsupportedAttributeError < StandardError; end
+
     class Visitor
       def visit(subject)
         method_name = class_to_method_name(subject.class)

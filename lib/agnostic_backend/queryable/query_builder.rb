@@ -43,8 +43,8 @@ module AgnosticBackend
         self
       end
 
-      def build
-        query = create_query(self)
+      def build(**options)
+        query = create_query(self, **options)
         query.children << build_where_expression if @criterion
         query.children << build_select_expression if @projections
         query.children << build_order_expression if @order_qualifiers
@@ -57,7 +57,7 @@ module AgnosticBackend
 
       private
 
-      def create_query(context)
+      def create_query(context, **options)
         raise NotImplementedError, 'AbstractMethod'
       end
 

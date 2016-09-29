@@ -80,7 +80,12 @@ module AgnosticBackend
         end
 
         def query_parser
-          'structured'
+          case visitor
+          when SimpleVisitor
+            'simple'
+          else
+            'structured'
+          end
         end
 
         def return_expression

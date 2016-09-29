@@ -60,9 +60,17 @@ describe AgnosticBackend::Queryable::Criteria::Binary do
     end
 
     context 'FreeText Criterion' do
-      let(:equal_criterion) { AgnosticBackend::Queryable::Criteria::FreeText.new(attribute: attribute, value: value, context: context) }
+      let(:free_text_criterion) { AgnosticBackend::Queryable::Criteria::FreeText.new(attribute: attribute, value: value, context: context) }
       it 'should inherit from Relational criterion' do
-        expect(equal_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
+        expect(free_text_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
+      end
+    end
+
+    context 'Fuzzy Criterion' do
+      let(:fuzzy_criterion) { AgnosticBackend::Queryable::Criteria::Fuzzy.new(attribute: attribute, value: value, context: context, fuzziness: 2) }
+      it 'should inherit from Relational criterion' do
+        expect(fuzzy_criterion).to be_a_kind_of AgnosticBackend::Queryable::Criteria::Relational
+        expect(fuzzy_criterion.fuzziness).to eq 2
       end
     end
 
