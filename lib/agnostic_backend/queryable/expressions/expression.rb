@@ -14,6 +14,17 @@ module AgnosticBackend
         end
       end
 
+
+      class Filter < Expression
+        def initialize(criterion:, context:)
+          super([criterion], context)
+        end
+
+        def criterion
+          children.first
+        end
+      end
+
       class Select < Expression
         def initialize(attributes:, context:)
           super(attributes.map { |a| Attribute.new(a, parent: self, context: context) }, context)

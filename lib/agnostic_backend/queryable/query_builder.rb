@@ -43,6 +43,11 @@ module AgnosticBackend
         self
       end
 
+      def filter(filter)
+        @filter = filter
+        self
+      end
+
       def build(**options)
         query = create_query(self, **options)
         query.children << build_where_expression if @criterion
@@ -50,6 +55,7 @@ module AgnosticBackend
         query.children << build_order_expression if @order_qualifiers
         query.children << build_limit_expression if @limit
         query.children << build_offset_expression if @offset
+        query.children << build_filter_expression if @filter
         query.children << build_scroll_cursor_expression if @scroll_cursor
 
         @query = query
@@ -63,6 +69,10 @@ module AgnosticBackend
 
       def build_where_expression
         Expressions::Where.new(criterion: @criterion, context: self)
+      end
+
+      def build_filter_expression
+        Expressions::Filter.new(criterion: @filter, context: self)
       end
 
       def build_select_expression

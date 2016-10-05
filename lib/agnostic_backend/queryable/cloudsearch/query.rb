@@ -7,9 +7,11 @@ module AgnosticBackend
           super
           case options[:parser]
           when :simple
-            @executor = Executor.new(self, SimpleVisitor.new)
+            @executor = Executor.new(self, SimpleVisitor.new, filter_visitor: Visitor.new)
+          when :structured
+            @executor = Executor.new(self, Visitor.new, filter_visitor: Visitor.new)
           else
-            @executor = Executor.new(self, Visitor.new)
+            @executor = Executor.new(self, Visitor.new, filter_visitor: Visitor.new)
           end
         end
 

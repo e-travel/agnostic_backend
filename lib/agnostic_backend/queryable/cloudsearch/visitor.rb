@@ -89,6 +89,10 @@ module AgnosticBackend
           visit(subject.criterion) #search?q=
         end
 
+        def visit_expressions_filter(subject)
+          visit(subject.criterion)
+        end
+
         def visit_expressions_select(subject)
           "#{subject.projections.map{|c| visit(c)}.join(',')}" #return=
         end

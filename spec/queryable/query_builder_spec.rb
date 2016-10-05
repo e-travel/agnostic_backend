@@ -24,6 +24,15 @@ describe AgnosticBackend::Queryable::QueryBuilder do
     end
   end
 
+  describe '#filter' do
+    let(:filter) { double('Filter') }
+
+    it 'should assign argument to filter instance variable' do
+      expect(subject.filter(filter)).to eq subject
+      expect(subject.instance_variable_get(:@filter)).to eq filter
+    end
+  end
+
   describe '#select' do
     let(:projections) { ['a'] }
 
@@ -120,6 +129,19 @@ describe AgnosticBackend::Queryable::QueryBuilder do
 
         expect(subject.build).to eq query
         expect(query.children.first).to eq where_expression
+      end
+    end
+
+    context 'when filter instance variable is defined' do
+      let(:filter) { double('filter') }
+      let(:filter_expression) { double('FilterExpression') }
+
+      it 'should build a filter expression and append to query\'s children' do
+        subject.instance_variable_set(:@filter, filter)
+        expect(subject).to receive(:build_filter_expression).and_return filter_expression
+
+        expect(subject.build).to eq query
+        expect(query.children.first).to eq filter_expression
       end
     end
 

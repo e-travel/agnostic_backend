@@ -99,6 +99,10 @@ module AgnosticBackend
         raise NotImplementedError
       end
 
+      def visit_expressions_filter(subject)
+        raise NotImplementedError
+      end
+
       def visit_expressions_select(subject)
         raise NotImplementedError
       end

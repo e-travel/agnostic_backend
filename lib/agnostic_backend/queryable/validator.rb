@@ -113,6 +113,10 @@ module AgnosticBackend
         visit(subject.criterion)
       end
 
+      def visit_expressions_filter(subject)
+        visit(subject.criterion)
+      end
+
       def visit_expressions_select(subject)
         subject.projections.each { |c| visit(c) }
       end
