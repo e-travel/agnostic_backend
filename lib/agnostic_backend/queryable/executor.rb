@@ -4,9 +4,12 @@ module AgnosticBackend
 
       attr_reader :query
       attr_reader :visitor
+      attr_reader :options
 
-      def initialize(query, visitor)
-        @query, @visitor = query, visitor
+      def initialize(query, visitor, **options)
+        @query = query
+        @visitor = visitor
+        @options = options
       end
 
       def execute
@@ -37,6 +40,10 @@ module AgnosticBackend
 
       def scroll_cursor_expression
         query.children.find { |e| e.is_a? Expressions::ScrollCursor }
+      end
+
+      def filter_expression
+        query.children.find { |e| e.is_a? Expressions::Filter }
       end
     end
   end

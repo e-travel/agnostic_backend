@@ -3,7 +3,7 @@ module AgnosticBackend
     module Elasticsearch
       class Query < AgnosticBackend::Queryable::Query
 
-        def initialize(base)
+        def initialize(base, **options)
           super
           @executor = Executor.new(self, Visitor.new)
         end

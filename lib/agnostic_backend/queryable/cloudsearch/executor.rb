@@ -16,11 +16,13 @@ module AgnosticBackend
         def to_s
           result = ''
           result += "search?q=#{query_expression}" if query_expression
+          result += " filter=#{filter_query}" if filter_query
           result += " return=#{return_expression}" if return_expression
           result += " sort=#{sort}" if sort
           result += " size=#{size}" if size
           result += " offset=#{start}" if start
           result += " cursor=#{scroll_cursor}" if scroll_cursor
+          result += " parser=#{query_parser}"
           result
         end
 
@@ -44,11 +46,16 @@ module AgnosticBackend
 
         private
 
+        def filter_visitor
+          options[:filter_visitor]
+        end
+
         def client
           query.context.index.cloudsearch_domain_client
         end
 
         def filter_query
+          filter_expression.accept(filter_visitor) if filter_expression
         end
 
         def query_expression
@@ -80,7 +87,12 @@ module AgnosticBackend
         end
 
         def query_parser
-          'structured'
+          case visitor
+          when SimpleVisitor
+            'simple'
+          else
+            'structured'
+          end
         end
 
         def return_expression

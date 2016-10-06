@@ -35,6 +35,25 @@ describe AgnosticBackend::Queryable::Expressions::Expression do
     end
   end
 
+  context 'Filter Expression' do
+    let(:an_equal_filter) { AgnosticBackend::Queryable::Criteria::Equal.new(attribute: 'an_integer', value: 10, context: context)}
+    let(:a_not_equal_filter) { AgnosticBackend::Queryable::Criteria::Equal.new(attribute: 'a_string', value: 'value', context: context)}
+    let(:and_filter) { AgnosticBackend::Queryable::Operations::And.new(operands: [an_equal_filter, a_not_equal_filter], context: context)}
+    let(:filter_expression) { AgnosticBackend::Queryable::Expressions::Filter.new(criterion: and_filter, context: context)}
+
+    it 'should inherit from Expression' do
+      expect(filter_expression).to be_a_kind_of AgnosticBackend::Queryable::Expressions::Expression
+    end
+
+    context 'aliases' do
+      describe '#criterion' do
+        it 'should be the first children' do
+          expect(filter_expression.criterion).to eq(filter_expression.children.first)
+        end
+      end
+    end
+  end
+
   context 'Select Expression' do
     let(:projections) { ['an_integer','a_string','a_date'] }
     let(:select_expression) { AgnosticBackend::Queryable::Expressions::Select.new(attributes: [projections], context: context) }

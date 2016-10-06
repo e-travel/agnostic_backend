@@ -1,76 +1,79 @@
 module AgnosticBackend
   module Queryable
     module Cloudsearch
-      class Visitor < AgnosticBackend::Queryable::Visitor
+      class SimpleVisitor < AgnosticBackend::Queryable::Visitor
 
         private
 
         def visit_criteria_equal(subject)
-          "(term field=#{visit(subject.attribute)} #{visit(subject.value)})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_not_equal(subject)
-          "(not term field=#{visit(subject.attribute)} #{visit(subject.value)})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_greater(subject)
-          "(range field=#{visit(subject.attribute)} {#{visit(subject.value)},})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_less(subject)
-          "(range field=#{visit(subject.attribute)} {,#{visit(subject.value)}})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_greater_equal(subject)
-          "(range field=#{visit(subject.attribute)} [#{visit(subject.value)},})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_less_equal(subject)
-          "(range field=#{visit(subject.attribute)} {,#{visit(subject.value)}])"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_greater_and_less(subject)
-          "(range field=#{visit(subject.attribute)} {#{visit(subject.left_value)},#{visit(subject.right_value)}})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_greater_equal_and_less(subject)
-          "(range field=#{visit(subject.attribute)} [#{visit(subject.left_value)},#{visit(subject.right_value)}})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_greater_and_less_equal(subject)
-          "(range field=#{visit(subject.attribute)} {#{visit(subject.left_value)},#{visit(subject.right_value)}])"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_greater_equal_and_less_equal(subject)
-          "(range field=#{visit(subject.attribute)} [#{visit(subject.left_value)},#{visit(subject.right_value)}])"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_contains(subject)
-          "(phrase field=#{visit(subject.attribute)} #{visit(subject.value)})"
+          raise UnsupportedNodeError
         end
 
         def visit_criteria_starts(subject)
-          "(prefix field=#{visit(subject.attribute)} #{visit(subject.value)})"
+          raise UnsupportedAttributeError unless subject.attribute.any?
+          "#{visit(subject.value)}*"
         end
 
         def visit_criteria_free_text(subject)
-          if subject.attribute.any?
-            "(and #{visit(subject.value)})"
-          else
-            "(and #{visit(subject.attribute)}: #{visit(subject.value)})"
-          end
+          raise UnsupportedAttributeError unless subject.attribute.any?
+          "#{visit(subject.value)}"
+        end
+
+        def visit_criteria_fuzzy(subject)
+          raise UnsupportedAttributeError unless subject.attribute.any?
+          "#{visit(subject.value)}~#{subject.fuzziness}"
         end
 
         def visit_operations_not(subject)
-          "(not #{visit(subject.operand)})"
+          raise UnsupportedNodeError
         end
 
         def visit_operations_and(subject)
-          "(and #{subject.operands.map{|o| visit(o)}.join(' ')})"
+          raise UnsupportedNodeError
         end
 
         def visit_operations_or(subject)
-          "(or #{subject.operands.map{|o| visit(o)}.join(' ')})"
+          raise UnsupportedNodeError
         end
 
         def visit_operations_ascending(subject)
@@ -87,10 +90,6 @@ module AgnosticBackend
 
         def visit_expressions_where(subject)
           visit(subject.criterion) #search?q=
-        end
-
-        def visit_expressions_filter(subject)
-          visit(subject.criterion)
         end
 
         def visit_expressions_select(subject)
@@ -119,16 +118,8 @@ module AgnosticBackend
 
         def visit_value(subject)
           case subject.type
-          when :integer
-            subject.value
-          when :date,:date_array
-            "'#{subject.value.utc.strftime("%Y-%m-%dT%H:%M:%SZ")}'"
-          when :double
-            subject.value
-          when :boolean
-            "'#{subject.value}'"
           when :string,:string_array,:text,:text_array
-            "'#{subject.value}'"
+            subject.value
           else
             subject.value
           end

@@ -3,11 +3,14 @@ module AgnosticBackend
     class Query < TreeNode
       attr_accessor :errors
       attr_reader :context
+      attr_reader :executor
+      attr_reader :options
 
-      def initialize(context)
+      def initialize(context, **options)
         super()
         @errors ||= Hash.new { |hash, key| hash[key] = Array.new }
         @context = context
+        @options = options
       end
 
       def execute

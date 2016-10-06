@@ -3,9 +3,16 @@ module AgnosticBackend
     module Cloudsearch
       class Query < AgnosticBackend::Queryable::Query
 
-        def initialize(base)
+        def initialize(base, **options)
           super
-          @executor = Executor.new(self, Visitor.new)
+          case options[:parser]
+          when :simple
+            @executor = Executor.new(self, SimpleVisitor.new, filter_visitor: Visitor.new)
+          when :structured
+            @executor = Executor.new(self, Visitor.new, filter_visitor: Visitor.new)
+          else
+            @executor = Executor.new(self, Visitor.new, filter_visitor: Visitor.new)
+          end
         end
 
         def execute

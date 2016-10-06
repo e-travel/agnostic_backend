@@ -20,8 +20,9 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
   let(:context) { double("Context", index: index) }
   let(:query) { double("Query", base: builder, context: context) }
   let(:visitor) { double('Visitor') }
+  let(:filter_visitor) { double('FilterVisitor') }
 
-  subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, visitor)}
+  subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, visitor, filter_visitor: filter_visitor) }
 
   describe '#execute' do
     let(:client) { double("Client") }
@@ -45,6 +46,12 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
   end
 
   describe '#filter_query' do
+    it 'should return where clause evaluation' do
+      filter_expression = double('FilterExpression')
+      expect(subject).to receive(:filter_expression).twice.and_return(filter_expression)
+      expect(filter_expression).to receive(:accept).with(filter_visitor).and_return('(field=attribute value)')
+      expect(subject.send(:filter_query)).to eq '(field=attribute value)'
+    end
   end
 
   describe '#query_expression' do
@@ -62,6 +69,17 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
       expect(subject).to receive(:offset_expression).twice.and_return(offset)
       expect(offset).to receive(:accept).with(visitor).and_return(1)
       expect(subject.send(:start)).to eq 1
+    end
+  end
+
+  describe '#filter_visitor' do
+    let(:visitor) { double('Visitor') }
+    let(:filter_visitor) { double('FilterVisitor') }
+
+    subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, visitor, filter_visitor: filter_visitor) }
+
+    it 'should return the filter_visitor' do
+      expect(subject.send(:filter_visitor)).to eq filter_visitor
     end
   end
 
@@ -87,8 +105,18 @@ describe AgnosticBackend::Queryable::Cloudsearch::Executor do
   end
 
   describe '#query_parser' do
-    it 'should return \'structured\'' do
-      expect(subject.send(:query_parser)).to eq 'structured'
+    context 'when visitor is SimpleVisitor' do
+      subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, AgnosticBackend::Queryable::Cloudsearch::SimpleVisitor.new)}
+      it 'should return \'simple\'' do
+        expect(subject.send(:query_parser)).to eq 'simple'
+      end
+    end
+
+    context 'when visitor is not SimpleVisitor' do
+      subject { AgnosticBackend::Queryable::Cloudsearch::Executor.new(query, AgnosticBackend::Queryable::Cloudsearch::Visitor.new)}
+      it 'should return \'structured\'' do
+        expect(subject.send(:query_parser)).to eq 'structured'
+      end
     end
   end
 

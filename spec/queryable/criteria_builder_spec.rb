@@ -61,6 +61,20 @@ describe AgnosticBackend::Queryable::CriteriaBuilder do
     end
   end
 
+  describe '#free_text' do
+    it 'should initialize an FreeText criterion' do
+      expect(AgnosticBackend::Queryable::Criteria::FreeText).to receive(:new).with(attribute: '*', value: 'abcde', context: context).and_call_original
+      expect(subject.free_text('*', 'abcde')).to be_a(AgnosticBackend::Queryable::Criteria::FreeText)
+    end
+  end
+
+  describe '#fuzzy' do
+    it 'should initialize an Fuzzy criterion' do
+      expect(AgnosticBackend::Queryable::Criteria::Fuzzy).to receive(:new).with(attribute: '*', value: 'abcde', context: context, fuzziness: 2).and_call_original
+      expect(subject.fuzzy('*', 'abcde', 2)).to be_a(AgnosticBackend::Queryable::Criteria::Fuzzy)
+    end
+  end
+
   describe '#neq' do
     it 'should initialize a NotEqual criterion' do
       expect(AgnosticBackend::Queryable::Criteria::NotEqual).to receive(:new).with(attribute: 'an_integer', value: 1, context: context).and_call_original

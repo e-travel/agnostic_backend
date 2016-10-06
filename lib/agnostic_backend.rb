@@ -40,6 +40,8 @@ require 'agnostic_backend/queryable/cloudsearch/query'
 require 'agnostic_backend/queryable/cloudsearch/query_builder'
 require 'agnostic_backend/queryable/cloudsearch/result_set'
 require 'agnostic_backend/queryable/cloudsearch/visitor'
+require 'agnostic_backend/queryable/cloudsearch/simple_visitor'
+
 
 require 'agnostic_backend/cloudsearch/index'
 require 'agnostic_backend/cloudsearch/index_field'
