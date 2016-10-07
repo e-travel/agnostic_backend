@@ -95,6 +95,8 @@ module AgnosticBackend
           opts.delete(:facet_enabled)
         when 'literal-array'
           opts.delete(:sort_enabled)
+        when 'date-array'
+          opts.delete(:sort_enabled)
         end
         opts
       end

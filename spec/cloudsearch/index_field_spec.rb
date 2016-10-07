@@ -212,6 +212,15 @@ describe AgnosticBackend::Cloudsearch::IndexField do
         expect(options.size).to eq 3
       end
     end
+    context 'when cloudsearch type is date-array' do
+      before { allow(subject).to receive(:cloudsearch_type).and_return 'literal-array' }
+      it 'should include the appropriate options' do
+        expect(options).to include :return_enabled
+        expect(options).to include :search_enabled
+        expect(options).to include :facet_enabled
+        expect(options.size).to eq 3
+      end
+    end
     context 'when cloudsearch type is anything else' do
       before { allow(subject).to receive(:cloudsearch_type).and_return 'int' }
       it 'should include the appropriate options' do
