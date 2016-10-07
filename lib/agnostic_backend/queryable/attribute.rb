@@ -21,6 +21,10 @@ module AgnosticBackend
       def any?
         @name == '*'
       end
+
+      def score?
+        @name == '_score'
+      end
     end
   end
 end

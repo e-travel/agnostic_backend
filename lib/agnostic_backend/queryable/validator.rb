@@ -138,7 +138,7 @@ module AgnosticBackend
       end
 
       def visit_attribute(subject)
-        if value_for_key(subject.context.index.schema, subject.name).nil? && !subject.any?
+        if value_for_key(subject.context.index.schema, subject.name).nil? && !subject.any? && !subject.score?
           subject.context.query.errors[subject.class.name] << attribute_error(subject)
           @valid = false
         end

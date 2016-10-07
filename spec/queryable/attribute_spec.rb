@@ -38,6 +38,22 @@ describe AgnosticBackend::Queryable::Attribute do
       end
     end
 
+    describe '#score?' do
+      context 'given an attribute with `_score` name' do
+        subject { AgnosticBackend::Queryable::Attribute.new('_score', parent: parent, context: context) }
+
+        it 'should return true' do
+          expect(subject.score?).to be true
+        end
+      end
+
+      context 'given an attribute with not `_score` name' do
+        it 'should return false' do
+          expect(subject.score?).to be false
+        end
+      end
+    end
+
     describe '#==' do
       context 'given two attribute objects' do
         it 'should be equal if attribute names are equal' do

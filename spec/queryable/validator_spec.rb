@@ -237,6 +237,22 @@ describe AgnosticBackend::Queryable::Validator do
       end
     end
 
+    context 'when attribute refers to score attribute' do
+      let(:attribute_name) { '_score' }
+
+      it 'should leave query errors empty' do
+        expect(subject).to receive(:visit_attribute).and_call_original
+        subject.visit(visitor_subject)
+        expect(query.errors).to be_empty
+      end
+
+      it 'should keep validator state to valid' do
+        expect(subject).to receive(:visit_attribute).and_call_original
+        subject.visit(visitor_subject)
+        expect(subject.instance_variable_get('@valid')).to be true
+      end
+    end
+
     context 'when schema does have attribute name as key' do
       before do
         allow(subject).to receive(:value_for_key).with(index.schema, attribute_name).and_return 'the_attribute'
