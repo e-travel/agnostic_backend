@@ -47,6 +47,19 @@ describe AgnosticBackend::Indexer do
     end
   end
 
+  describe '#generate_document' do
+    let(:document) { double('IndexableGeneratedDocument') }
+    let(:prepared_doc) { double('PreparedDocument') }
+    let(:transformed_doc) { double('TransformedDoc') }
+    let(:indexable) { double("Indexable1", generate_document: document) }
+
+    it 'prepares and transforms the indexables generated document' do
+      expect(subject).to receive(:prepare).with(document).and_return(prepared_doc)
+      expect(subject).to receive(:transform).with(prepared_doc).and_return(transformed_doc)
+      expect(subject.generate_document(indexable)).to eq transformed_doc
+    end
+  end
+
   describe '#delete' do
     let(:document_id) { 1 }
     it 'should forward to #delete_all and return its value' do
