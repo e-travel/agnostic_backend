@@ -21,10 +21,16 @@ module AgnosticBackend
     # @param [Indexable] an Indexable object
     def put_all(indexables)
       documents = indexables.map do |indexable|
-        transform(prepare(indexable.generate_document))
+        generate_document(indexable)
       end
       documents.reject!(&:empty?)
+
       publish_all(documents) unless documents.empty?
+    end
+
+    # @param [Indexable] an Indexable object
+    def generate_document(indexable)
+      transform(prepare(indexable.generate_document))
     end
 
     # Deletes the specified document from the index
@@ -41,8 +47,6 @@ module AgnosticBackend
       raise NotImplementedError
     end
 
-    private
-
     def publish(document)
       publish_all([document])
     end
@@ -50,6 +54,8 @@ module AgnosticBackend
     def publish_all(documents)
       raise NotImplementedError
     end
+
+    private
 
     def transform(document)
       raise NotImplementedError

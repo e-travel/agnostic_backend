@@ -22,7 +22,6 @@ module AgnosticBackend
         publish_all(documents)
       end
 
-      private
 
       def publish(document)
         publish_all([document])
@@ -39,6 +38,8 @@ module AgnosticBackend
           )
         end
       end
+
+      private
 
       def client
         index.cloudsearch_domain_client
