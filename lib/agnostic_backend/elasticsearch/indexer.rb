@@ -3,12 +3,6 @@ module AgnosticBackend
     class Indexer < AgnosticBackend::Indexer
       include AgnosticBackend::Utilities
 
-      private
-
-      def client
-        index.client
-      end
-
       def publish(document)
         client.send_request(:put,
                             path: "/#{index.index_name}/#{index.type}/#{document["id"]}",
@@ -26,6 +20,11 @@ module AgnosticBackend
         response
       end
 
+      private
+
+      def client
+        index.client
+      end
 
       def prepare(document)
         raise IndexingError.new, "Document does not have an ID field" unless document["id"].present?
