@@ -31,20 +31,23 @@ module AgnosticBackend
       end
 
       def extract_contents_from(object, index_name, observer:)
+        result = {}
         kv_pairs = contents.map do |field_name, field|
           field_value = field.evaluate(context: object)
           if field.type.nested?
             if field_value.respond_to? :generate_document
               observer.add(field_value)
-              field_value = field_value.generate_document(for_index: index_name, observer: observer)
+              result[field_name] = field_value.generate_document(for_index: index_name, observer: observer)
             elsif field_value.present?
-              field_name = nil
+              next
+            else
+              result[field_name] = field_value
             end
+          else
+            result[field_name] = field_value
           end
-          [field_name, field_value]
         end
-        kv_pairs.reject! { |attr_name, _| attr_name.nil? }
-        Hash[kv_pairs]
+        result
       end
 
     end
