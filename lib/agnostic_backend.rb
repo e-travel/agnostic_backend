@@ -52,5 +52,4 @@ Dir[File.dirname(__FILE__) + '/agnostic_backend/elasticsearch/*.rb'].each {|file
 Dir[File.dirname(__FILE__) + '/agnostic_backend/queryable/elasticsearch/*.rb'].each {|file| require file }
 
 module AgnosticBackend
-
 end

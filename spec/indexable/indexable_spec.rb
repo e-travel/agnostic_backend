@@ -3,7 +3,6 @@ require 'spec_helper'
 describe AgnosticBackend::Indexable do
 
   describe 'Indexable functionality' do
-
     let(:field_block) { proc {
                           string :a;
                           string 'b', value: 'b';
@@ -388,6 +387,95 @@ describe AgnosticBackend::Indexable do
           subject.index_object(:not_there)
         end
       end
+    end
+  end
+
+  describe 'inheritance' do
+    let(:superclass) do
+      class Some
+        include AgnosticBackend::Indexable
+        attr_accessor :a, :b, :c
+
+        define_index_fields() do
+          string :a
+          string :b
+          string :c
+        end
+
+        define_index_notifier { self }
+
+        def sub_a
+          'Super'
+        end
+
+        def sub_b
+          'super'
+        end
+      end
+
+      Some
+    end
+
+    context 'Given a subclass of an indexable' do
+      let(:subclass) do
+        class Subclass < superclass
+          attr_accessor :sub_a, :sub_b
+        end
+        Subclass
+      end
+      subject { subclass.new }
+
+      it { expect(subject).to be_a AgnosticBackend::Indexable }
+      it { expect(subject).to be_a superclass }
+
+      it 'has the same index_name with its superclass' do
+        expect(subject.class.index_name).to eq superclass.index_name
+        expect(subject.index_name).to eq superclass.new.index_name
+      end
+
+      it 'has the same index content managers with its superclass' do
+        expect(subject._index_content_managers).to eq superclass._index_content_managers
+        expect(subject._index_content_managers.size).to eq 1
+      end
+
+      it 'has the same index_content_notifiers with its superclass ' do
+        expect(subject._index_root_notifiers).to eq superclass._index_root_notifiers
+      end
+
+      context 'includers' do
+        subject { AgnosticBackend::Indexable }
+          it { expect(subject.includers).to include(superclass) }
+          it { expect(subject.includers).to include(subclass) }
+      end
+
+      context 'when define_index_fieds is overrided' do
+        subject do
+          class Subclass < superclass
+            attr_accessor :sub_a, :sub_b, :z
+
+            # NOTE that Super class needs to respond to :sub_a and :sub_b
+            # or else an exception will be raised since the subclass and
+            # superclass has the same index schema at this point.
+            define_index_fields do
+              string :sub_a
+              string :sub_b
+            end
+
+          end
+          Subclass.new
+        end
+
+        it 'has the same index name with super class' do
+          expect(subject.index_name).to eq superclass.new.index_name
+          expect(subject.class.index_name).to eq superclass.index_name
+        end
+        it 'has defined all index fields including its superclass fields' do
+          expect(subject._index_content_managers.size).to eq 1
+          expect(subject._index_content_managers).to eq superclass._index_content_managers
+          expect(subject._index_root_notifiers).to eq superclass._index_root_notifiers
+        end
+      end
+
     end
   end
 end

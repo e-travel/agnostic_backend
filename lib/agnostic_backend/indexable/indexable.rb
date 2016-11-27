@@ -9,22 +9,39 @@ module AgnosticBackend
       end
     end
 
+    def self.define_inheritance_behavior(base)
+      base.class_eval do
+        def self.inherited(subclass)
+          subclass.include(AgnosticBackend::Indexable)
+
+          subclass.singleton_class.send(:define_method, :index_name) do |source = nil|
+            super(subclass.superclass)
+          end
+
+          subclass.instance_variable_set(:@__index_content_managers, subclass.superclass._index_content_managers)
+          subclass.instance_variable_set(:@__index_root_notifiers, subclass.superclass._index_root_notifiers)
+        end
+      end
+    end
+
+
     def self.included(base)
       @includers ||= []
       @includers << base if @includers.none?{|klass| klass.name == base.name}
       base.send :include, InstanceMethods
       base.send :extend, ClassMethods
+
+      define_inheritance_behavior(base)
     end
 
     module ClassMethods
-
       def create_index
-        AgnosticBackend::Indexable::Config.create_index_for(self)
+        Config.create_index_for(self)
       end
 
       def create_indices(include_primary: true)
-        AgnosticBackend::Indexable::Config.create_indices_for(self,
-                                                              include_primary: include_primary)
+        Config.create_indices_for(self,
+                                  include_primary: include_primary)
       end
 
       # establishes the convention for determining the index name from the class name
@@ -54,13 +71,13 @@ module AgnosticBackend
         raise "Index #{index_name} has not been defined for #{name}" if manager.nil?
         kv_pairs = manager.contents.map do |field_name, field|
           schema =
-              if field.type.nested?
-                field.from.map { |klass| klass.schema(for_index: index_name, &block) }.reduce(&:merge)
-              elsif block_given?
-                yield field.type
-              else
-                field.type.type
-              end
+            if field.type.nested?
+              field.from.map { |klass| klass.schema(for_index: index_name, &block) }.reduce(&:merge)
+            elsif block_given?
+              yield field.type
+            else
+              field.type.type
+            end
           [field_name, schema]
         end
         Hash[kv_pairs]
@@ -104,8 +121,8 @@ module AgnosticBackend
 
       def put_to_index(index_name=nil)
         indexable_class = index_name.nil? ?
-                            self.class :
-                            AgnosticBackend::Indexable.indexable_class(index_name)
+          self.class :
+          AgnosticBackend::Indexable.indexable_class(index_name)
 
         indexable_class.create_indices.map do |index|
           indexer = index.indexer
