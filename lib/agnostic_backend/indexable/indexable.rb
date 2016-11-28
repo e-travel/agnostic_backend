@@ -123,7 +123,7 @@ module AgnosticBackend
         return unless respond_to? :_index_root_notifiers
         _index_root_notifiers.each do |index_name, block|
           obj = instance_eval &block
-          obj = [obj] unless obj.is_a? Enumerable
+          obj = [obj] unless obj.respond_to? :each
           obj.each { |o| o.index_object(index_name) if o.present? }
         end
       end
