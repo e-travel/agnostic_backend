@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.required_ruby_version = '>= 2.1.0' # for mandatory method keyword arguments
 
-  spec.add_runtime_dependency "activesupport", ">3", "<5"
+  spec.add_runtime_dependency "activesupport", ">4", "<6"
   spec.add_runtime_dependency "aws-sdk", "~> 2"
   spec.add_runtime_dependency "faraday"
 
